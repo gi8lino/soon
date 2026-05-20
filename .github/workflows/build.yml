@@ -1,0 +1,73 @@
+name: build
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+      actions: write
+
+    env:
+      BUNDLE_ID: io.github.gi8lino.soon
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Derive version from tag
+        id: version
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+          echo "Tag: $TAG"
+          echo "Version: $VERSION"
+
+      - name: Build universal release artifact
+        shell: bash
+        run: |
+          make release \
+            ARCH=universal \
+            VERSION="${{ steps.version.outputs.version }}" \
+            BUNDLE_ID="${BUNDLE_ID}"
+
+      - name: Verify bundled artifacts
+        shell: bash
+        run: |
+          file "dist/Soon.app/Contents/MacOS/Soon"
+          test -f "dist/Soon.app/Contents/Info.plist"
+          test -f "dist/Soon-${{ steps.version.outputs.version }}.zip"
+
+      - name: Print package checksum
+        shell: bash
+        run: |
+          shasum -a 256 "dist/Soon-${{ steps.version.outputs.version }}.zip"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            "dist/Soon-${{ steps.version.outputs.version }}.zip" \
+            --generate-notes
+
+      - name: Trigger Homebrew update workflow
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh workflow run update-homebrew-formula.yml \
+            -f tag="${{ steps.version.outputs.tag }}"

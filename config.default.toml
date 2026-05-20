@@ -1,0 +1,118 @@
+[logging]
+enabled = false
+debug = false
+directory = "~/.local/state/soon"
+
+[app]
+lock_dir = "/tmp/soon"
+
+[menu_bar]
+spacing = 4
+
+[menu_bar.icon]
+enabled = true
+kind = "sf_symbol"
+value = "calendar"
+
+[menu_bar.date]
+enabled = false
+format = "EEE d"
+
+[builtins.calendar]
+popup_mode = "month"
+
+[builtins.calendar.filters]
+included_calendar_names = []
+excluded_calendar_names = []
+
+[builtins.calendar.appointments]
+empty_text = "No appointments"
+show_calendar_name = false
+show_location = true
+show_travel_time = true
+show_end_time = true
+show_alert_icon = false
+show_all_day_label = true
+show_holiday_all_day_label = false
+all_day_label = "All day"
+
+[builtins.calendar.birthdays]
+show_birthdays = true
+birthdays_show_age = true
+birthday_icon = ""
+
+[builtins.calendar.upcoming.events]
+days = 3
+exclude_past_events = false
+
+[builtins.calendar.upcoming.popup]
+background_color = "#111111"
+border_color = "#444444"
+border_width = 1
+corner_radius = 10
+padding_x = 10
+padding_y = 8
+spacing = 8
+margin_x = 8
+margin_y = 8
+
+[builtins.calendar.month.popup.style]
+background_color = "#111111"
+border_color = "#444444"
+border_width = 1
+corner_radius = 10
+padding_x = 10
+padding_y = 8
+spacing = 8
+margin_x = 8
+margin_y = 8
+
+[builtins.calendar.month.popup.calendar]
+show_week_numbers = true
+show_event_indicators = true
+header_text_color = "#ffffff"
+weekday_text_color = "#91d7e3"
+weekday_format = "dd"
+day_text_color = "#d0d0d0"
+outside_month_text_color = "#6e738d"
+today_cell_background_color = "#00000000"
+today_cell_border_color = "#FF0000"
+today_cell_border_width = 1.4
+indicator_color = "#8bd5ca"
+
+[builtins.calendar.month.popup.selection]
+selected_text_color = "#0B1020"
+selected_background_color = "#89B4FA"
+selection_date_format = "yyyy-MM-dd"
+selection_date_separator = " - "
+allows_range_selection = true
+reset_selection_on_third_tap = true
+
+[builtins.calendar.month.popup.agenda]
+layout = "calendar_appointments_vertical"
+appointments_scrollable = true
+appointments_min_height = 140
+appointments_max_height = 240
+agenda_title = "Appointments"
+max_visible_appointments = 8
+
+[builtins.calendar.month.popup.anchor]
+date_format = "EEE d MMM"
+text_color = "#ffffff"
+show_date_text = true
+
+[builtins.calendar.month.popup.today_button]
+title = "Today"
+icon = ""
+border_color = "#3F2F6B"
+border_width = 1.5
+
+[builtins.calendar.composer]
+create_title = "New Appointment"
+edit_title = "Edit Appointment"
+save_label = "Save"
+update_label = "Update"
+remove_label = "Remove"
+cancel_label = "Cancel"
+delete_confirmation_title = "Remove appointment?"
+delete_confirmation_message = "This action cannot be undone."

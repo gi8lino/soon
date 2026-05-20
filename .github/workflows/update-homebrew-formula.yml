@@ -1,0 +1,88 @@
+name: update-homebrew-formula
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag
+        required: true
+        type: string
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Derive asset URL
+        id: vars
+        shell: bash
+        run: |
+          TAG="${{ inputs.tag }}"
+          VERSION="${TAG#v}"
+          ASSET_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/Soon-${VERSION}.zip"
+
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "asset_url=${ASSET_URL}" >> "$GITHUB_OUTPUT"
+
+      - name: Download release archive
+        shell: bash
+        run: |
+          curl -fL "${{ steps.vars.outputs.asset_url }}" -o Soon.zip
+
+      - name: Compute SHA-256
+        id: sha
+        shell: bash
+        run: |
+          SHA="$(sha256sum Soon.zip | awk '{print $1}')"
+          echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout Homebrew tap
+        uses: actions/checkout@v6
+        with:
+          repository: gi8lino/homebrew-tap
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: homebrew-tap
+
+      - name: Update formula
+        shell: bash
+        run: |
+          FORMULA_FILE="homebrew-tap/Formula/soon.rb"
+          mkdir -p "$(dirname "${FORMULA_FILE}")"
+
+          VERSION="${{ steps.vars.outputs.version }}"
+          SHA="${{ steps.sha.outputs.sha }}"
+
+          cat > "${FORMULA_FILE}" <<EOF
+            service do
+              run [opt_libexec/"Soon.app/Contents/MacOS/Soon"]
+              environment_variables PATH: std_service_path_env, LANG: "en_US.UTF-8"
+              keep_alive true
+              process_type :interactive
+              working_dir HOMEBREW_PREFIX
+              log_path var/"log/soon/soon.out.log"
+              error_log_path var/"log/soon/soon.err.log"
+            end
+
+            test do
+              assert_match "soon", shell_output("#{bin}/soon --help 2>&1")
+            end
+          end
+          EOF
+
+      - name: Commit and push changes
+        shell: bash
+        run: |
+          cd homebrew-tap
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add Formula/soon.rb
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "soon ${{ steps.vars.outputs.version }}"
+          git push
