@@ -10,7 +10,7 @@ APP_CONTENTS := $(APP_BUNDLE)/Contents
 APP_MACOS := $(APP_CONTENTS)/MacOS
 APP_RESOURCES := $(APP_CONTENTS)/Resources
 APP_BIN := $(APP_MACOS)/$(APP_EXEC)
-PLIST_TEMPLATE := Sources/Soon/App/Info.plist
+PLIST_TEMPLATE := packaging/Info.plist
 PLIST := $(APP_CONTENTS)/Info.plist
 
 APP_ICON_SVG := packaging/Soon.svg

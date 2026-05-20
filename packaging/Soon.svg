@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  width="800"
+  height="800"
+  viewBox="0 0 1024 1024"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- calendar body -->
+  <rect
+    x="112"
+    y="180"
+    width="800"
+    height="732"
+    rx="88"
+    fill="#FFFFFF"
+    stroke="#45484C"
+    stroke-width="42"
+  />
+
+  <!-- top accent bar -->
+  <rect
+    x="112"
+    y="290"
+    width="800"
+    height="100"
+    rx="24"
+    fill="#FFB89A"
+  />
+
+  <!-- binding rings -->
+  <rect x="278" y="90" width="64" height="170" rx="32" fill="#45484C"/>
+  <rect x="682" y="90" width="64" height="170" rx="32" fill="#45484C"/>
+
+  <!-- top ring cutouts -->
+  <rect x="292" y="128" width="36" height="78" rx="18" fill="#FFFFFF"/>
+  <rect x="696" y="128" width="36" height="78" rx="18" fill="#FFFFFF"/>
+
+  <!-- inner content lines -->
+  <rect x="210" y="500" width="604" height="54" rx="27" fill="#33CC99"/>
+  <rect x="210" y="645" width="332" height="54" rx="27" fill="#33CC99"/>
+  <rect x="590" y="645" width="164" height="54" rx="27" fill="#33CC99"/>
+
+  <!-- subtle separator -->
+  <rect x="170" y="432" width="684" height="24" rx="12" fill="#E9ECEF"/>
+</svg>

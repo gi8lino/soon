@@ -27,9 +27,6 @@ let package = Package(
         .product(name: "TOMLKit", package: "TOMLKit"),
       ],
       path: "Sources/Soon",
-      exclude: [
-        "App/Info.plist"
-      ]
     )
   ]
 )
