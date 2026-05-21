@@ -20,6 +20,7 @@ APP_ICON_ICNS := $(APP_RESOURCES)/$(APP_ICON_FILE).icns
 PACKAGE_NAME := $(APP_NAME)-$(VERSION).zip
 PACKAGE_ZIP := $(DIST_DIR)/$(PACKAGE_NAME)
 PACKAGE_STAGE := $(DIST_DIR)/package
+PACKAGE_ROOT := $(APP_NAME)-$(VERSION)
 
 BUILD_INFO := Sources/Soon/Runtime/BuildInfo.swift
 
@@ -90,9 +91,9 @@ bundle: prepare-version clean-dist ## Build Soon.app into dist/.
 
 package: bundle ## Create the release ZIP consumed by the Homebrew formula.
 	@rm -rf "$(PACKAGE_STAGE)" "$(PACKAGE_ZIP)"
-	@mkdir -p "$(PACKAGE_STAGE)"
-	@cp -R "$(APP_BUNDLE)" "$(PACKAGE_STAGE)/$(APP_NAME).app"
-	@cd "$(PACKAGE_STAGE)" && zip -qry "../$(PACKAGE_NAME)" "$(APP_NAME).app"
+	@mkdir -p "$(PACKAGE_STAGE)/$(PACKAGE_ROOT)"
+	@cp -R "$(APP_BUNDLE)" "$(PACKAGE_STAGE)/$(PACKAGE_ROOT)/$(APP_NAME).app"
+	@cd "$(PACKAGE_STAGE)" && zip -qry "../$(PACKAGE_NAME)" "$(PACKAGE_ROOT)"
 	@rm -rf "$(PACKAGE_STAGE)"
 	@echo "Created $(PACKAGE_ZIP)"
 
