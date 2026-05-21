@@ -8,4 +8,5 @@ agent/WiFiSnitch.app/Contents/MacOS/WiFiSnitch
 .cache/
 .build/
 dist/
-
+Library/*
+.swiftpm-*
