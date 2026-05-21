@@ -643,12 +643,9 @@ final class SoonCalendarService {
   /// Returns the month grid date range around the current visible month.
   private func requestedMonthRange() -> DateInterval {
     let calendar = resolvedCalendar()
+    let monthStart = CalendarMonthRangeBuilder.startOfMonth(visibleMonth, calendar: calendar)
 
-    let monthStart =
-      calendar.date(from: calendar.dateComponents([.year, .month], from: visibleMonth))
-      ?? calendar.startOfDay(for: visibleMonth)
-
-    return visibleGridRange(for: monthStart, calendar: calendar)
+    return CalendarMonthRangeBuilder.visibleGridRange(for: monthStart, calendar: calendar)
       ?? DateInterval(
         start: monthStart,
         end:
@@ -666,28 +663,6 @@ final class SoonCalendarService {
     }
 
     return calendar
-  }
-
-  /// Returns the exact displayed grid range for one visible month.
-  private func visibleGridRange(for visibleMonth: Date, calendar: Calendar) -> DateInterval? {
-    let monthStart =
-      calendar.date(from: calendar.dateComponents([.year, .month], from: visibleMonth))
-      ?? calendar.startOfDay(for: visibleMonth)
-
-    guard
-      let monthEnd = calendar.date(byAdding: .month, value: 1, to: monthStart),
-      let monthInterval = calendar.dateInterval(of: .month, for: monthStart),
-      let firstWeek = calendar.dateInterval(of: .weekOfYear, for: monthInterval.start),
-      let lastVisibleDay = calendar.date(byAdding: .day, value: -1, to: monthEnd),
-      let lastWeek = calendar.dateInterval(of: .weekOfYear, for: lastVisibleDay)
-    else {
-      return nil
-    }
-
-    return DateInterval(
-      start: calendar.startOfDay(for: firstWeek.start),
-      end: calendar.startOfDay(for: lastWeek.end)
-    )
   }
 
   /// Returns whether Calendar read access is available.

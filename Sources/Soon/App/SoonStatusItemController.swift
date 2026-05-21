@@ -43,16 +43,7 @@ final class SoonStatusItemController: NSObject {
 
   /// Size used by the selected calendar surface.
   private var calendarSize: CGSize {
-    switch runtimeConfig.calendar.popupMode {
-    case .month:
-      return CGSize(width: 560, height: 560)
-
-    case .upcoming:
-      return CGSize(width: 360, height: 520)
-
-    case .none:
-      return CGSize(width: 280, height: 96)
-    }
+    runtimeConfig.calendar.popupSurfaceSize
   }
 
   /// Creates and installs the status item.
