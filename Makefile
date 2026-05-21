@@ -51,7 +51,7 @@ endif
 .DEFAULT_GOAL := help
 
 .PHONY: help all prepare-version build app bundle package release fmt clean clean-dist run dev stop icons \
-        build-app verify stamp-plist sign \
+        build-app verify verify-release stamp-plist sign \
         print-arch print-version print-latest-tag print-package-sha256 \
         tag-patch tag-minor tag-major push-tags
 
@@ -96,7 +96,8 @@ package: bundle ## Create the release ZIP consumed by the Homebrew formula.
 	@rm -rf "$(PACKAGE_STAGE)"
 	@echo "Created $(PACKAGE_ZIP)"
 
-release: package ## Build the zipped release artifact.
+release: package ## Build and verify the zipped release artifact.
+	@$(MAKE) --no-print-directory verify-release VERSION=$(VERSION) ARCH=$(ARCH)
 	@echo "Release artifact ready: $(PACKAGE_ZIP)"
 
 build-app: ## Internal target: build the app executable for ARCH.
@@ -169,6 +170,17 @@ verify: ## Show the built binary architectures and packaged artifacts.
 	@ls -1 "$(APP_CONTENTS)"
 	@echo "Packaged Resources:"
 	@ls -1 "$(APP_RESOURCES)" 2>/dev/null || true
+
+verify-release: ## Validate the release package and print release fingerprints.
+	@$(MAKE) --no-print-directory verify
+	@test -f "$(PACKAGE_ZIP)"
+	@echo "Release package:"
+	@ls -lh "$(PACKAGE_ZIP)"
+	@echo "Build fingerprints:"
+	@shasum -a 256 "$(APP_BIN)"
+	@shasum -a 256 "$(PLIST)"
+	@shasum -a 256 "$(PACKAGE_ZIP)"
+	@codesign -dv --verbose=4 "$(APP_BUNDLE)" 2>&1 || true
 
 run: bundle ## Build, stop old instances, and open Soon.
 	@$(MAKE) --no-print-directory stop

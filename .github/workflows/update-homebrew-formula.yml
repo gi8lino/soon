@@ -7,6 +7,10 @@ on:
         description: Release tag
         required: true
         type: string
+      version:
+        description: Release version without leading v
+        required: true
+        type: string
 
 jobs:
   update-formula:
@@ -18,7 +22,7 @@ jobs:
         shell: bash
         run: |
           TAG="${{ inputs.tag }}"
-          VERSION="${TAG#v}"
+          VERSION="${{ inputs.version }}"
           ASSET_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/Soon-${VERSION}.zip"
 
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
@@ -54,6 +58,22 @@ jobs:
           SHA="${{ steps.sha.outputs.sha }}"
 
           cat > "${FORMULA_FILE}" <<EOF
+          class Soon < Formula
+            desc "Minimal macOS app launcher for scheduled reminders"
+            homepage "https://github.com/gi8lino/soon"
+            url "https://github.com/gi8lino/soon/releases/download/v${VERSION}/Soon-${VERSION}.zip"
+            sha256 "${SHA}"
+            license "Apache-2.0"
+            version "${VERSION}"
+
+            depends_on macos: :sonoma
+
+            def install
+              libexec.install "Soon.app"
+
+              (var/"log/soon").mkpath
+            end
+
             service do
               run [opt_libexec/"Soon.app/Contents/MacOS/Soon"]
               environment_variables PATH: std_service_path_env, LANG: "en_US.UTF-8"
@@ -65,7 +85,7 @@ jobs:
             end
 
             test do
-              assert_match "soon", shell_output("#{bin}/soon --help 2>&1")
+              assert_predicate libexec/"Soon.app", :exist?
             end
           end
           EOF
