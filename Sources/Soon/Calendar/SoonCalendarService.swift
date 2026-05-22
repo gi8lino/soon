@@ -380,6 +380,11 @@ final class SoonCalendarService {
   ) -> CalendarAgentEvent? {
     let sourceCalendar = event.calendar
     let isBirthday = sourceCalendar?.type == .birthday
+
+    if isBirthday && !query.showBirthdays {
+      return nil
+    }
+
     let eventIdentifier = isBirthday ? nil : event.eventIdentifier
     let id = stableID(for: event, isBirthday: isBirthday)
 
