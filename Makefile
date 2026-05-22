@@ -38,6 +38,7 @@ NEXT_MAJOR := $(shell python3 -c 'm,n,p=map(int,"$(CURRENT_VERSION)".split("."))
 
 SWIFT_BUILD_RELEASE := swift build -c release
 SWIFT_BUILD_DEBUG := swift build -c debug
+SWIFT_TEST := swift test --scratch-path .build
 
 ifeq ($(ARCH),universal)
 ARCHES := arm64 x86_64
@@ -51,7 +52,7 @@ endif
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all prepare-version build app bundle package release fmt clean clean-dist run dev stop icons \
+.PHONY: help all prepare-version build app bundle package release fmt test clean clean-dist run dev stop icons \
         build-app verify verify-release stamp-plist sign \
         print-arch print-version print-latest-tag print-package-sha256 \
         tag-patch tag-minor tag-major push-tags
@@ -75,6 +76,9 @@ build: bundle ## Build the app bundle for the selected ARCH.
 
 app: prepare-version ## Build only the app executable for the selected ARCH.
 	@$(MAKE) --no-print-directory build-app ARCH=$(ARCH) VERSION=$(VERSION)
+
+test: ## Build and run Swift package tests.
+	@$(SWIFT_TEST)
 
 fmt: ## Format all Swift source files in the repository.
 	@swift format format --in-place --recursive --parallel .

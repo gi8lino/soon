@@ -27,6 +27,11 @@ let package = Package(
         .product(name: "TOMLKit", package: "TOMLKit"),
       ],
       path: "Sources/Soon",
-    )
+    ),
+    .testTarget(
+      name: "SoonTests",
+      dependencies: ["Soon"],
+      path: "Tests/SoonTests",
+    ),
   ]
 )
