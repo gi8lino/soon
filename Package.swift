@@ -12,7 +12,7 @@ let package = Package(
   ],
   dependencies: [
     .package(
-      url: "https://github.com/gi8lino/easybar.git", exact: "0.0.204"),
+      url: "https://github.com/gi8lino/easybar.git", exact: "0.0.205"),
     //.package(path: "../easybar"),
     .package(url: "https://github.com/LebJe/TOMLKit", from: "0.6.0"),
   ],
