@@ -123,7 +123,7 @@ value = "calendar"
 enabled = false
 format = "EEE d"
 
-[builtins.calendar]
+[calendar]
 popup_mode = "month"
 ```
 
@@ -186,17 +186,17 @@ Soon supports two popup modes:
 Month mode:
 
 ```toml
-[builtins.calendar]
+[calendar]
 popup_mode = "month"
 ```
 
 Upcoming mode:
 
 ```toml
-[builtins.calendar]
+[calendar]
 popup_mode = "upcoming"
 
-[builtins.calendar.upcoming.events]
+[calendar.upcoming.events]
 days = 7
 exclude_past_events = true
 ```
@@ -204,7 +204,7 @@ exclude_past_events = true
 Disable the calendar popup:
 
 ```toml
-[builtins.calendar]
+[calendar]
 popup_mode = "none"
 ```
 
@@ -213,11 +213,11 @@ popup_mode = "none"
 Common appointment options:
 
 ```toml
-[builtins.calendar.filters]
+[calendar.filters]
 included_calendar_names = []
 excluded_calendar_names = []
 
-[builtins.calendar.appointments]
+[calendar.appointments]
 empty_text = "No appointments"
 show_calendar_name = false
 show_location = true
@@ -232,7 +232,7 @@ all_day_label = "All day"
 Birthday options:
 
 ```toml
-[builtins.calendar.birthdays]
+[calendar.birthdays]
 show_birthdays = true
 birthdays_show_age = true
 birthday_icon = ""
@@ -241,11 +241,11 @@ birthday_icon = ""
 Upcoming options:
 
 ```toml
-[builtins.calendar.upcoming.events]
+[calendar.upcoming.events]
 days = 3
 exclude_past_events = false
 
-[builtins.calendar.upcoming.popup]
+[calendar.upcoming.popup]
 background_color = "#111111"
 border_color = "#444444"
 border_width = 1
@@ -260,7 +260,7 @@ margin_y = 8
 Month popup style:
 
 ```toml
-[builtins.calendar.month.popup.style]
+[calendar.month.popup.style]
 background_color = "#111111"
 border_color = "#444444"
 border_width = 1
@@ -275,7 +275,7 @@ margin_y = 8
 Month calendar style:
 
 ```toml
-[builtins.calendar.month.popup.calendar]
+[calendar.month.popup.calendar]
 show_week_numbers = true
 show_event_indicators = true
 header_text_color = "#ffffff"
@@ -292,7 +292,7 @@ indicator_color = "#8bd5ca"
 Month selection style:
 
 ```toml
-[builtins.calendar.month.popup.selection]
+[calendar.month.popup.selection]
 selected_text_color = "#0b1020"
 selected_background_color = "#89b4fa"
 selection_date_format = "yyyy-MM-dd"
@@ -304,7 +304,7 @@ reset_selection_on_third_tap = true
 Month agenda style:
 
 ```toml
-[builtins.calendar.month.popup.agenda]
+[calendar.month.popup.agenda]
 layout = "calendar_appointments_vertical"
 appointments_scrollable = true
 appointments_min_height = 140
@@ -316,7 +316,7 @@ max_visible_appointments = 8
 Month selected-date header:
 
 ```toml
-[builtins.calendar.month.popup.anchor]
+[calendar.month.popup.anchor]
 date_format = "EEE d MMM"
 text_color = "#ffffff"
 show_date_text = true
@@ -325,7 +325,7 @@ show_date_text = true
 Today button:
 
 ```toml
-[builtins.calendar.month.popup.today_button]
+[calendar.month.popup.today_button]
 title = "Today"
 icon = ""
 border_color = "#3F2F6B"
@@ -335,7 +335,7 @@ border_width = 1.5
 Composer labels:
 
 ```toml
-[builtins.calendar.composer]
+[calendar.composer]
 create_title = "New Appointment"
 edit_title = "Edit Appointment"
 save_label = "Save"

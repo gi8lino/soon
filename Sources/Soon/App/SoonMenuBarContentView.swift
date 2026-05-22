@@ -88,7 +88,7 @@ struct SoonMenuBarContentView: View {
         Text("Calendar popup disabled")
           .font(.system(size: 13, weight: .semibold))
 
-        Text("Set builtins.calendar.popup_mode to month or upcoming.")
+        Text("Set calendar.popup_mode to month or upcoming.")
           .font(.system(size: 12))
           .foregroundStyle(.secondary)
       }

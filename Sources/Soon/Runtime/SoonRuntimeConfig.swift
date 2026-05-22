@@ -113,17 +113,16 @@ private func parsedConfig(at path: String) -> TOMLTable {
 
 /// Parses the shared calendar config block.
 private func parsedCalendarConfig(from toml: TOMLTable) -> CalendarBuiltinConfig {
-  let builtinsTable = toml["builtins"]?.table ?? TOMLTable()
-  let calendarTable = builtinsTable["calendar"]?.table ?? TOMLTable()
+  let topLevelCalendarTable = toml["calendar"]?.table ?? TOMLTable()
 
   do {
     return try CalendarBuiltinConfig.parse(
-      from: calendarTable,
+      from: topLevelCalendarTable,
       fallback: CalendarBuiltinConfig.default,
-      path: "builtins.calendar"
+      path: "calendar"
     )
   } catch {
-    fputs("soon: invalid builtins.calendar config: \(error)\n", stderr)
+    fputs("soon: invalid calendar config: \(error)\n", stderr)
     return .default
   }
 }
