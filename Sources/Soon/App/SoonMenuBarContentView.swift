@@ -16,12 +16,12 @@ struct SoonMenuBarContentView: View {
 
   /// Width used by the selected calendar surface.
   private var panelWidth: CGFloat {
-    runtimeConfig.calendar.popupSurfaceSize.width
+    runtimeConfig.calendar.soonPopupSurfaceSize.width
   }
 
   /// Height used by the selected calendar surface.
   private var panelHeight: CGFloat {
-    runtimeConfig.calendar.popupSurfaceSize.height
+    runtimeConfig.calendar.soonPopupSurfaceSize.height
   }
 
   /// Renders the configured calendar surface.

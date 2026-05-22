@@ -45,7 +45,7 @@ final class SoonStatusItemController: NSObject {
 
   /// Size used by the selected calendar surface.
   private var calendarSize: CGSize {
-    runtimeConfig.calendar.popupSurfaceSize
+    runtimeConfig.calendar.soonPopupSurfaceSize
   }
 
   /// Creates and installs the status item.
