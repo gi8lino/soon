@@ -357,13 +357,11 @@ final class SoonCalendarService {
     let excluded = Set(query.excludedCalendarNames.map(normalizedFilterName))
 
     let filtered = allCalendars.filter { calendar in
-      let name = normalizedFilterName(calendar.title)
-
-      if !included.isEmpty && !included.contains(name) {
+      if !included.isEmpty && !calendarMatchesAnyFilter(calendar, filters: included) {
         return false
       }
 
-      if excluded.contains(name) {
+      if calendarMatchesAnyFilter(calendar, filters: excluded) {
         return false
       }
 
@@ -804,6 +802,20 @@ final class SoonCalendarService {
   /// Normalizes a calendar filter name.
   private func normalizedFilterName(_ value: String) -> String {
     value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+  }
+
+  /// Returns whether one calendar matches any configured filter token.
+  private func calendarMatchesAnyFilter(_ calendar: EKCalendar, filters: Set<String>) -> Bool {
+    guard !filters.isEmpty else { return false }
+
+    let candidates = Set([
+      normalizedFilterName(calendar.title),
+      normalizedFilterName(calendar.calendarIdentifier),
+      normalizedFilterName(calendar.source.title),
+      normalizedFilterName(calendar.source.sourceIdentifier)
+    ])
+
+    return !candidates.isDisjoint(with: filters)
   }
 
   /// Sorts events consistently.
