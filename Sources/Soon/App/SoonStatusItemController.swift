@@ -20,6 +20,8 @@ private final class SoonCalendarPanel: NSPanel {
 final class SoonStatusItemController: NSObject {
   /// Shared app services.
   private let services: SoonServices
+  /// Reloads the app so updated config is picked up.
+  private let onReloadConfig: () -> Void
   /// Runtime config.
   private let runtimeConfig = SoonRuntimeConfig.current
   /// Runtime menu bar config.
@@ -47,8 +49,12 @@ final class SoonStatusItemController: NSObject {
   }
 
   /// Creates and installs the status item.
-  init(services: SoonServices) {
+  init(
+    services: SoonServices,
+    onReloadConfig: @escaping () -> Void
+  ) {
     self.services = services
+    self.onReloadConfig = onReloadConfig
     self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     self.hostingController = NSHostingController(
       rootView: AnyView(
@@ -264,6 +270,7 @@ final class SoonStatusItemController: NSObject {
 
     menu.addItem(.separator())
 
+    menu.addItem(actionItem(title: "Reload Config", action: #selector(reloadConfig(_:))))
     menu.addItem(actionItem(title: "Refresh", action: #selector(refresh(_:))))
     menu.addItem(actionItem(title: "Open Calendar Settings", action: #selector(openCalendarSettings(_:))))
     menu.addItem(actionItem(title: "Open Calendar App", action: #selector(openCalendarApp(_:))))
@@ -280,6 +287,11 @@ final class SoonStatusItemController: NSObject {
     let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
     item.target = self
     return item
+  }
+
+  /// Relaunches Soon so updated config is applied everywhere.
+  @objc private func reloadConfig(_ sender: Any?) {
+    onReloadConfig()
   }
 
   /// Refreshes the current calendar snapshot.

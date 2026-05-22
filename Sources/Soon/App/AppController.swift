@@ -25,7 +25,12 @@ final class AppController {
     NSApp.setActivationPolicy(.accessory)
 
     services.calendar.start()
-    statusItemController = SoonStatusItemController(services: services)
+    statusItemController = SoonStatusItemController(
+      services: services,
+      onReloadConfig: { [weak self] in
+        self?.reloadConfig()
+      }
+    )
   }
 
   /// Stops Soon.
@@ -45,6 +50,28 @@ final class AppController {
         .appendingPathComponent("soon.out")
         .path
     )
+  }
+
+  /// Relaunches Soon so the latest config is loaded everywhere.
+  private func reloadConfig() {
+    let config = NSWorkspace.OpenConfiguration()
+    let appURL = Bundle.main.bundleURL
+
+    NSWorkspace.shared.openApplication(at: appURL, configuration: config) { [weak self] _, error in
+      Task { @MainActor in
+        guard let self else { return }
+
+        if let error {
+          self.services.logger.error(
+            "soon failed to relaunch for config reload",
+            .field("error", error.localizedDescription)
+          )
+          return
+        }
+
+        NSApp.terminate(nil)
+      }
+    }
   }
 
   /// Acquires the single-instance lock for Soon.
