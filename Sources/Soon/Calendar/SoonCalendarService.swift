@@ -353,19 +353,12 @@ final class SoonCalendarService {
   private func calendarsForQuery(_ query: CalendarAgentQuery) -> [EKCalendar]? {
     let allCalendars = eventStore.calendars(for: .event)
 
-    let included = Set(query.includedCalendarNames.map(normalizedFilterName))
-    let excluded = Set(query.excludedCalendarNames.map(normalizedFilterName))
-
     let filtered = allCalendars.filter { calendar in
-      if !included.isEmpty && !calendarMatchesAnyFilter(calendar, filters: included) {
-        return false
-      }
-
-      if calendarMatchesAnyFilter(calendar, filters: excluded) {
-        return false
-      }
-
-      return true
+      CalendarFilterMatcher.matches(
+        filterTarget(for: calendar),
+        includedFilters: query.includedCalendarNames,
+        excludedFilters: query.excludedCalendarNames
+      )
     }
 
     return filtered
@@ -799,23 +792,14 @@ final class SoonCalendarService {
     return trimmed.isEmpty ? nil : trimmed
   }
 
-  /// Normalizes a calendar filter name.
-  private func normalizedFilterName(_ value: String) -> String {
-    value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-  }
-
-  /// Returns whether one calendar matches any configured filter token.
-  private func calendarMatchesAnyFilter(_ calendar: EKCalendar, filters: Set<String>) -> Bool {
-    guard !filters.isEmpty else { return false }
-
-    let candidates = Set([
-      normalizedFilterName(calendar.title),
-      normalizedFilterName(calendar.calendarIdentifier),
-      normalizedFilterName(calendar.source.title),
-      normalizedFilterName(calendar.source.sourceIdentifier)
-    ])
-
-    return !candidates.isDisjoint(with: filters)
+  /// Maps one EventKit calendar into the shared filter target model.
+  private func filterTarget(for calendar: EKCalendar) -> CalendarFilterTarget {
+    CalendarFilterTarget(
+      title: calendar.title,
+      identifier: calendar.calendarIdentifier,
+      sourceTitle: calendar.source.title,
+      sourceIdentifier: calendar.source.sourceIdentifier
+    )
   }
 
   /// Sorts events consistently.
