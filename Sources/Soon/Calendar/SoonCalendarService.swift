@@ -356,8 +356,12 @@ final class SoonCalendarService {
     let filtered = allCalendars.filter { calendar in
       CalendarFilterMatcher.matches(
         filterTarget(for: calendar),
-        includedFilters: query.includedCalendarNames,
-        excludedFilters: query.excludedCalendarNames
+        includedTitleTokens: query.includedCalendarNames,
+        excludedTitleTokens: query.excludedCalendarNames,
+        includedCalendarIDTokens: query.includedCalendarIDs,
+        excludedCalendarIDTokens: query.excludedCalendarIDs,
+        includedSourceIDTokens: query.includedCalendarSourceIDs,
+        excludedSourceIDTokens: query.excludedCalendarSourceIDs
       )
     }
 
