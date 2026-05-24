@@ -1,4 +1,5 @@
 import XCTest
+
 @testable import Soon
 
 final class SoonSmokeTests: XCTestCase {

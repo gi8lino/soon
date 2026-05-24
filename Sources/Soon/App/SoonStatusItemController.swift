@@ -43,11 +43,6 @@ final class SoonStatusItemController: NSObject {
   /// Local click monitor used to close the calendar panel.
   private var localClickMonitor: Any?
 
-  /// Size used by the selected calendar surface.
-  private var calendarSize: CGSize {
-    runtimeConfig.calendar.soonPopupSurfaceSize
-  }
-
   /// Creates and installs the status item.
   init(
     services: SoonServices,
@@ -122,13 +117,16 @@ final class SoonStatusItemController: NSObject {
 
     stopClickMonitors()
 
-    let size = calendarSize
-    let panel = calendarPanel ?? makeCalendarPanel(size: size)
+    let panel = calendarPanel ?? makeCalendarPanel()
 
     calendarPanel = panel
-    hostingController.view.frame = NSRect(origin: .zero, size: size)
-    panel.setContentSize(size)
-    panel.setFrameOrigin(panelOrigin(size: size, relativeTo: button))
+    hostingController.view.layoutSubtreeIfNeeded()
+
+    let fittingSize = hostingController.view.fittingSize
+    guard fittingSize.width > 0, fittingSize.height > 0 else { return }
+
+    panel.setContentSize(fittingSize)
+    panel.setFrameOrigin(panelOrigin(size: fittingSize, relativeTo: button))
 
     panel.orderFrontRegardless()
     panel.makeKey()
@@ -141,9 +139,9 @@ final class SoonStatusItemController: NSObject {
   }
 
   /// Creates the borderless calendar panel.
-  private func makeCalendarPanel(size: CGSize) -> SoonCalendarPanel {
+  private func makeCalendarPanel() -> SoonCalendarPanel {
     let panel = SoonCalendarPanel(
-      contentRect: NSRect(origin: .zero, size: size),
+      contentRect: .zero,
       styleMask: [.borderless, .nonactivatingPanel],
       backing: .buffered,
       defer: false

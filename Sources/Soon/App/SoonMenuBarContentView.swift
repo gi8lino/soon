@@ -14,16 +14,6 @@ struct SoonMenuBarContentView: View {
   /// Runtime config used to choose the calendar surface.
   private let runtimeConfig = SoonRuntimeConfig.current
 
-  /// Width used by the selected calendar surface.
-  private var panelWidth: CGFloat {
-    runtimeConfig.calendar.soonPopupSurfaceSize.width
-  }
-
-  /// Height used by the selected calendar surface.
-  private var panelHeight: CGFloat {
-    runtimeConfig.calendar.soonPopupSurfaceSize.height
-  }
-
   /// Renders the configured calendar surface.
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
@@ -33,9 +23,7 @@ struct SoonMenuBarContentView: View {
 
       calendarContent
     }
-    .frame(width: panelWidth, height: panelHeight, alignment: .topLeading)
     .background(Color.clear)
-    .clipped()
     .onAppear {
       services.calendar.refresh()
     }
@@ -66,7 +54,6 @@ struct SoonMenuBarContentView: View {
           services.calendar.refresh()
         }
       )
-      .frame(width: panelWidth, alignment: .topLeading)
 
     case .upcoming:
       CalendarUpcomingPopupView(
@@ -81,7 +68,6 @@ struct SoonMenuBarContentView: View {
           }
         }
       )
-      .frame(width: panelWidth, alignment: .topLeading)
 
     case .none:
       VStack(alignment: .leading, spacing: 8) {
@@ -93,7 +79,6 @@ struct SoonMenuBarContentView: View {
           .foregroundStyle(.secondary)
       }
       .padding(14)
-      .frame(width: panelWidth, alignment: .leading)
       .background(Color(nsColor: .controlBackgroundColor))
     }
   }
@@ -119,7 +104,7 @@ struct SoonMenuBarContentView: View {
     .foregroundStyle(.white.opacity(0.92))
     .padding(.horizontal, 14)
     .padding(.vertical, 10)
-    .frame(width: panelWidth, alignment: .leading)
+    .frame(maxWidth: .infinity, alignment: .leading)
     .background(Color.red.opacity(0.18))
   }
 
