@@ -41,7 +41,7 @@ struct SoonRuntimeConfig {
   let menuBar: MenuBarConfig
 
   /// Process-wide loaded runtime config.
-  static let current = load()
+  static private(set) var current = load()
 
   /// Loads the Soon runtime config from env, config file, and defaults.
   static func load() -> SoonRuntimeConfig {
@@ -96,6 +96,14 @@ struct SoonRuntimeConfig {
       calendar: parsedCalendarConfig(from: toml),
       menuBar: menuBar
     )
+  }
+
+  /// Reloads the process-wide runtime config from disk.
+  @discardableResult
+  static func reloadCurrent() -> SoonRuntimeConfig {
+    let config = load()
+    current = config
+    return config
   }
 }
 

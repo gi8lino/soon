@@ -14,14 +14,25 @@ final class SoonServices: ObservableObject {
   let store: SoonCalendarStore
 
   /// Shared in-process calendar service.
-  lazy var calendar = SoonCalendarService(
-    runtimeConfig: SoonRuntimeConfig.current,
-    store: store,
-    logger: logger.child("calendar_service")
-  )
+  private(set) var calendar: SoonCalendarService
 
   /// Creates the shared service container.
   private init() {
     store = SoonCalendarStore(logger: logger.child("calendar_store"))
+    calendar = SoonCalendarService(
+      runtimeConfig: SoonRuntimeConfig.current,
+      store: store,
+      logger: logger.child("calendar_service")
+    )
+  }
+
+  /// Recreates services that depend on the runtime config.
+  func reload(runtimeConfig: SoonRuntimeConfig) {
+    calendar.stop()
+    calendar = SoonCalendarService(
+      runtimeConfig: runtimeConfig,
+      store: store,
+      logger: logger.child("calendar_service")
+    )
   }
 }

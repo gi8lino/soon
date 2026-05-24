@@ -52,33 +52,23 @@ final class AppController {
     )
   }
 
-  /// Relaunches Soon so the latest config is loaded everywhere.
+  /// Reloads the runtime config and rebuilds the app UI in place.
   private func reloadConfig() {
-    let config = NSWorkspace.OpenConfiguration()
-    let appURL = Bundle.main.bundleURL
-    let runtimeConfig = SoonRuntimeConfig.current
+    let runtimeConfig = SoonRuntimeConfig.reloadCurrent()
 
-    // Release the single-instance lock before relaunching so the new process
-    // can start successfully before this one terminates.
-    instanceGuard = nil
+    configureLogging(runtimeConfig: runtimeConfig)
 
-    NSWorkspace.shared.openApplication(at: appURL, configuration: config) { [weak self] _, error in
-      Task { @MainActor in
-        guard let self else { return }
+    statusItemController?.stop()
+    statusItemController = nil
 
-        if let error {
-          self.instanceGuard = SingleInstanceGuard()
-          _ = self.acquireInstanceLock(runtimeConfig: runtimeConfig)
-          self.services.logger.error(
-            "soon failed to relaunch for config reload",
-            .field("error", error.localizedDescription)
-          )
-          return
-        }
-
-        NSApp.terminate(nil)
+    services.reload(runtimeConfig: runtimeConfig)
+    services.calendar.start()
+    statusItemController = SoonStatusItemController(
+      services: services,
+      onReloadConfig: { [weak self] in
+        self?.reloadConfig()
       }
-    }
+    )
   }
 
   /// Acquires the single-instance lock for Soon.
