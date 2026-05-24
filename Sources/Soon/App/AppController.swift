@@ -8,7 +8,7 @@ final class AppController {
   /// Shared Soon services.
   private let services = SoonServices.shared
   /// Single-instance guard for the app process.
-  private let instanceGuard = SingleInstanceGuard()
+  private var instanceGuard: SingleInstanceGuard? = SingleInstanceGuard()
   /// Native status item controller.
   private var statusItemController: SoonStatusItemController?
 
@@ -56,12 +56,19 @@ final class AppController {
   private func reloadConfig() {
     let config = NSWorkspace.OpenConfiguration()
     let appURL = Bundle.main.bundleURL
+    let runtimeConfig = SoonRuntimeConfig.current
+
+    // Release the single-instance lock before relaunching so the new process
+    // can start successfully before this one terminates.
+    instanceGuard = nil
 
     NSWorkspace.shared.openApplication(at: appURL, configuration: config) { [weak self] _, error in
       Task { @MainActor in
         guard let self else { return }
 
         if let error {
+          self.instanceGuard = SingleInstanceGuard()
+          _ = self.acquireInstanceLock(runtimeConfig: runtimeConfig)
           self.services.logger.error(
             "soon failed to relaunch for config reload",
             .field("error", error.localizedDescription)
@@ -76,7 +83,15 @@ final class AppController {
 
   /// Acquires the single-instance lock for Soon.
   private func acquireInstanceLock(runtimeConfig: SoonRuntimeConfig) -> Bool {
-    switch instanceGuard.acquireLock(
+    let guardInstance =
+      instanceGuard
+      ?? {
+        let guardInstance = SingleInstanceGuard()
+        instanceGuard = guardInstance
+        return guardInstance
+      }()
+
+    switch guardInstance.acquireLock(
       processName: "soon",
       directory: runtimeConfig.lockDirectory
     ) {
