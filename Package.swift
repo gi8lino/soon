@@ -11,7 +11,8 @@ let package = Package(
     .executable(name: "Soon", targets: ["Soon"])
   ],
   dependencies: [
-    .package(path: "../easybar"),
+    //.package(path: "../easybar"),
+    .package(url: "https://github.com/gi8lino/easybar", from: "0.0.210"),
     .package(url: "https://github.com/LebJe/TOMLKit", from: "0.6.0"),
   ],
   targets: [
