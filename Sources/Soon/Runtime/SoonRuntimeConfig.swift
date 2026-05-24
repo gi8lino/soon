@@ -40,13 +40,71 @@ struct SoonRuntimeConfig {
   /// Menu bar config.
   let menuBar: MenuBarConfig
 
+  /// Captured result of the initial process-wide load.
+  private static let initialLoadResult = performLoad()
+
   /// Process-wide loaded runtime config.
-  static private(set) var current = load()
+  static private(set) var current = initialLoadResult.config
+  /// Most recent config load failure, cleared after a successful reload.
+  static private(set) var lastLoadFailure = initialLoadResult.failure
 
   /// Loads the Soon runtime config from env, config file, and defaults.
   static func load() -> SoonRuntimeConfig {
+    return current
+  }
+
+  /// Reloads the process-wide runtime config from disk.
+  @discardableResult
+  static func reloadCurrent() -> LoadResult {
+    let result = performLoad(fallbackConfig: current)
+    current = result.config
+    lastLoadFailure = result.failure
+    return result
+  }
+
+  /// One runtime-config load result.
+  struct LoadResult {
+    let config: SoonRuntimeConfig
+    let failure: SoonConfigError?
+  }
+
+  /// Performs one runtime-config load, keeping the provided fallback config on failure.
+  private static func performLoad(
+    fallbackConfig: SoonRuntimeConfig? = nil
+  ) -> LoadResult {
     let configPath = resolvedSoonConfigPath()
-    let toml = parsedConfig(at: configPath)
+
+    do {
+      let toml = try parsedConfig(at: configPath)
+      let calendar = try parsedCalendarConfig(from: toml)
+
+      return LoadResult(
+        config: resolvedConfig(
+          from: toml,
+          configPath: configPath,
+          calendar: calendar
+        ),
+        failure: nil
+      )
+    } catch let error as SoonConfigError {
+      return LoadResult(
+        config: fallbackConfig ?? defaultConfig(configPath: configPath),
+        failure: error
+      )
+    } catch {
+      return LoadResult(
+        config: fallbackConfig ?? defaultConfig(configPath: configPath),
+        failure: .fileReadFailure(message: error.localizedDescription)
+      )
+    }
+  }
+
+  /// Resolves one runtime config from a parsed TOML table.
+  private static func resolvedConfig(
+    from toml: TOMLTable,
+    configPath: String,
+    calendar: CalendarBuiltinConfig
+  ) -> SoonRuntimeConfig {
 
     let loggingTable = toml["logging"]?.table
     let appTable = toml["app"]?.table
@@ -93,34 +151,46 @@ struct SoonRuntimeConfig {
       loggingDebugEnabled: loggingDebugEnabled,
       loggingDirectory: loggingDirectory,
       lockDirectory: lockDirectory,
-      calendar: parsedCalendarConfig(from: toml),
+      calendar: calendar,
       menuBar: menuBar
     )
   }
 
-  /// Reloads the process-wide runtime config from disk.
-  @discardableResult
-  static func reloadCurrent() -> SoonRuntimeConfig {
-    let config = load()
-    current = config
-    return config
+  /// Resolves one default runtime config without reading config.toml.
+  private static func defaultConfig(configPath: String) -> SoonRuntimeConfig {
+    return resolvedConfig(
+      from: TOMLTable(),
+      configPath: configPath,
+      calendar: .default
+    )
   }
 }
 
-/// Returns one parsed TOML table or an empty table when loading fails.
-private func parsedConfig(at path: String) -> TOMLTable {
-  guard
-    let text = try? String(contentsOfFile: path, encoding: .utf8),
-    let table = try? TOMLTable(string: text)
-  else {
+/// Returns one parsed TOML table or throws a user-facing config error.
+private func parsedConfig(at path: String) throws -> TOMLTable {
+  if !FileManager.default.fileExists(atPath: path) {
     return TOMLTable()
   }
 
-  return table
+  let text: String
+
+  do {
+    text = try String(contentsOfFile: path, encoding: .utf8)
+  } catch {
+    throw SoonConfigError.fileReadFailure(message: error.localizedDescription)
+  }
+
+  do {
+    return try TOMLTable(string: text)
+  } catch let error as TOMLParseError {
+    throw makeSoonParseFailure(from: error, text: text)
+  } catch {
+    throw SoonConfigError.fileReadFailure(message: error.localizedDescription)
+  }
 }
 
 /// Parses the shared calendar config block.
-private func parsedCalendarConfig(from toml: TOMLTable) -> CalendarBuiltinConfig {
+private func parsedCalendarConfig(from toml: TOMLTable) throws -> CalendarBuiltinConfig {
   let topLevelCalendarTable = toml["calendar"]?.table ?? TOMLTable()
 
   do {
@@ -129,9 +199,8 @@ private func parsedCalendarConfig(from toml: TOMLTable) -> CalendarBuiltinConfig
       fallback: CalendarBuiltinConfig.default,
       path: "calendar"
     )
-  } catch {
-    fputs("soon: invalid calendar config: \(error)\n", stderr)
-    return .default
+  } catch let error as CalendarConfigError {
+    throw SoonConfigError.invalidCalendar(error)
   }
 }
 

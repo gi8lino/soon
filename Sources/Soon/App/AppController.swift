@@ -7,6 +7,8 @@ import Foundation
 final class AppController {
   /// Shared Soon services.
   private let services = SoonServices.shared
+  /// Floating shared config error window.
+  private let configErrorWindowController = SoonConfigErrorWindowController()
   /// Single-instance guard for the app process.
   private var instanceGuard: SingleInstanceGuard? = SingleInstanceGuard()
   /// Native status item controller.
@@ -31,6 +33,12 @@ final class AppController {
         self?.reloadConfig()
       }
     )
+
+    presentLoadFailureIfNeeded(
+      SoonRuntimeConfig.lastLoadFailure,
+      context: .initialLoad,
+      configPath: runtimeConfig.configPath
+    )
   }
 
   /// Stops Soon.
@@ -54,7 +62,8 @@ final class AppController {
 
   /// Reloads the runtime config and rebuilds the app UI in place.
   private func reloadConfig() {
-    let runtimeConfig = SoonRuntimeConfig.reloadCurrent()
+    let loadResult = SoonRuntimeConfig.reloadCurrent()
+    let runtimeConfig = loadResult.config
 
     configureLogging(runtimeConfig: runtimeConfig)
 
@@ -66,6 +75,33 @@ final class AppController {
     statusItemController = SoonStatusItemController(
       services: services,
       onReloadConfig: { [weak self] in
+        self?.reloadConfig()
+      }
+    )
+
+    presentLoadFailureIfNeeded(
+      loadResult.failure,
+      context: .reloadKeptPreviousConfig,
+      configPath: runtimeConfig.configPath
+    )
+  }
+
+  /// Shows or closes the shared config error window based on the current load failure.
+  private func presentLoadFailureIfNeeded(
+    _ failure: SoonConfigError?,
+    context: SoonConfigLoadFailureContext,
+    configPath: String
+  ) {
+    guard let failure else {
+      configErrorWindowController.close()
+      return
+    }
+
+    configErrorWindowController.present(
+      error: failure,
+      context: context,
+      configPath: configPath,
+      onReload: { [weak self] in
         self?.reloadConfig()
       }
     )
