@@ -477,6 +477,16 @@ Open the local bundled app manually:
 open dist/Soon.app
 ```
 
+## Screenshots
+
+### Calendar
+
+![Calendar screenshot](./assets/month.png)
+
+### Upcoming
+
+![Upcoming screenshot](./assets/upcoming.png)
+
 ## License
 
 This project is licensed under the Apache 2.0 License. See the `LICENSE` file for details.
