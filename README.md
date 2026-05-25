@@ -481,11 +481,11 @@ open dist/Soon.app
 
 ### Calendar
 
-<img src="./assets/month.png" alt="Calendar screenshot" width="640" />
+<img src="./assets/month.png" alt="Calendar screenshot" width="320" />
 
 ### Upcoming
 
-<img src="./assets/upcoming.png" alt="Upcoming screenshot" width="640" />
+<img src="./assets/upcoming.png" alt="Upcoming screenshot" width="320" />
 
 ## License
 
