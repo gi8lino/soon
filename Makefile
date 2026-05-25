@@ -25,7 +25,7 @@ PACKAGE_ROOT := $(APP_NAME)-$(VERSION)
 BUILD_INFO := Sources/Soon/Runtime/BuildInfo.swift
 
 BUNDLE_ID ?= io.github.gi8lino.soon
-VERSION ?= $(CURRENT_VERSION)
+VERSION ?= dev
 ARCH ?= universal
 
 VERSION_PREFIX ?= v
