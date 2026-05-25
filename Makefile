@@ -66,11 +66,9 @@ all: build ## Build the default artifacts.
 
 prepare-version: ## Update BuildInfo.swift with the selected VERSION.
 	@mkdir -p "$(dir $(BUILD_INFO))"
-	@if [ -f "$(BUILD_INFO)" ]; then \
-		python3 -c 'from pathlib import Path; import re; path = Path("$(BUILD_INFO)"); text = path.read_text(); \
-updated = re.sub(r"(public\s+)?static let appVersion = \".*?\"", lambda m: (m.group(1) or "") + "static let appVersion = \"$(VERSION)\"", text, count=1); \
-path.write_text(updated)'; \
-	fi
+	@python3 -c 'from pathlib import Path; import re; path = Path("$(BUILD_INFO)"); text = path.read_text(); \
+updated = re.sub(r"public static let appVersion = \".*?\"", "public static let appVersion = \"$(VERSION)\"", text, count=1); \
+path.write_text(updated)'
 
 build: bundle ## Build the app bundle for the selected ARCH.
 
@@ -210,11 +208,9 @@ clean-dist: ## Remove dist/.
 
 clean: ## Remove dist/, .build, and reset BuildInfo.swift to its placeholder version.
 	@rm -rf "$(DIST_DIR)" ".build"
-	@if [ -f "$(BUILD_INFO)" ]; then \
-		python3 -c 'from pathlib import Path; import re; path = Path("$(BUILD_INFO)"); text = path.read_text(); \
-updated = re.sub(r"(public\s+)?static let appVersion = \".*?\"", lambda m: (m.group(1) or "") + "static let appVersion = \"dev\"", text, count=1); \
-path.write_text(updated)'; \
-	fi
+	@python3 -c 'from pathlib import Path; import re; path = Path("$(BUILD_INFO)"); text = path.read_text(); \
+updated = re.sub(r"public static let appVersion = \".*?\"", "public static let appVersion = \"dev\"", text, count=1); \
+path.write_text(updated)'
 
 ##@ Info
 

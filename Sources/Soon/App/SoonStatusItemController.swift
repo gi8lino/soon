@@ -259,7 +259,7 @@ final class SoonStatusItemController: NSObject {
     let menu = NSMenu()
 
     let titleItem = NSMenuItem(
-      title: "Soon \(BuildInfo.displayVersion)",
+      title: "Soon \(BuildInfo.appVersion)",
       action: nil,
       keyEquivalent: ""
     )
