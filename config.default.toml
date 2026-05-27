@@ -6,6 +6,36 @@ directory = "~/.local/state/soon" # Directory used for Soon log files.
 [app]
 lock_dir = "/tmp/soon" # Directory used for the single-instance app lock file.
 
+[theme.colors]
+background = "#111111" # Default popup background.
+surface = "#1a1a1a" # Default surface color.
+surface_elevated = "#2b2b2b" # Elevated surface color.
+surface_hover = "#202020" # Hover surface color.
+text = "#ffffff" # Primary text color.
+text_secondary = "#d0d0d0" # Secondary text color.
+text_tertiary = "#c0c0c0" # Tertiary text color.
+muted = "#6c7086" # Muted text and inactive UI color.
+muted_secondary = "#8a8a8a" # Secondary muted color.
+outside_month = "#6e738d" # Text color for days outside the current month.
+border = "#333333" # Default border color.
+border_strong = "#444444" # Strong border color.
+border_subtle = "#00000000" # Transparent/subtle border color.
+accent = "#91d7e3" # Primary accent color.
+accent_secondary = "#89B4FA" # Secondary accent color.
+accent_soft = "#8bd5ca" # Soft accent color.
+success = "#a6e3a1" # Success color.
+success_secondary = "#a6da95" # Secondary success color.
+warning = "#f9e2af" # Warning color.
+orange = "#fab387" # Orange status color.
+error = "#f38ba8" # Error color.
+danger = "#FF0000" # Strong danger/today marker color.
+selection_text = "#0B1020" # Text color on selected dates.
+selection_background = "#89B4FA" # Background color for selected dates.
+transparent = "#00000000" # Transparent color.
+overlay_outline = "#000000F0" # Overlay outline color.
+overlay_text = "#FFFFFFFF" # Overlay text color.
+today_button_border = "#3F2F6B" # Today button border color.
+
 [menu_bar]
 spacing = 4 # Spacing in points between visible menu bar items.
 
@@ -31,6 +61,10 @@ excluded_calendar_source_ids = [] # Optional advanced denylist of exact calendar
 
 [calendar.appointments]
 empty_text = "No appointments" # Placeholder text shown when no appointments are visible.
+event_text_color = "theme.text_secondary" # Text color of appointment rows.
+empty_text_color = "theme.text_tertiary" # Text color of the appointments empty state.
+secondary_text_color = "theme.accent" # Text color of secondary appointment details and section headings.
+travel_text_color = "theme.muted_secondary" # Muted text color used for travel-time and end-time rows.
 show_calendar_name = false # Shows each event's calendar name in appointment rows.
 show_location = true # Shows event locations in appointment rows when present.
 show_travel_time = true # Shows travel time details when available.
@@ -39,19 +73,24 @@ show_alert_icon = false # Shows an alert indicator for events with reminders.
 show_all_day_label = true # Shows a label for all-day events.
 show_holiday_all_day_label = false # Shows the all-day label for holiday calendars too.
 all_day_label = "All day" # Label text used for all-day events.
+travel_icon = "" # Leading icon shown for travel-time rows.
+travel_icon_color = "theme.muted_secondary" # Color of the travel-time icon.
+alert_icon = "" # Optional icon shown when show_alert_icon is true and the event has an alert.
+alert_icon_color = "theme.muted_secondary" # Color of the alert icon.
 
 [calendar.birthdays]
 show_birthdays = true # Includes birthdays from Calendar.app in event lists.
 birthdays_show_age = true # Shows the computed age for birthday entries when available.
 birthday_icon = "" # Icon shown next to birthday entries.
+birthday_icon_color = "theme.accent_soft" # Color of the birthday icon.
 
 [calendar.upcoming.events]
 days = 3 # Number of days to include in upcoming mode.
 exclude_past_events = false # Hides events that already started when true.
 
 [calendar.upcoming.popup]
-background_color = "#111111" # Popup background color.
-border_color = "#444444" # Popup border color.
+background_color = "theme.background" # Popup background color.
+border_color = "theme.border_strong" # Popup border color.
 border_width = 1 # Popup border width in points.
 corner_radius = 10 # Popup corner radius in points.
 padding_x = 10 # Horizontal inner padding in points.
@@ -61,8 +100,8 @@ margin_x = 8 # Horizontal screen-edge margin in points.
 margin_y = 8 # Vertical screen-edge margin in points.
 
 [calendar.month.popup.style]
-background_color = "#111111" # Month popup background color.
-border_color = "#444444" # Month popup border color.
+background_color = "theme.background" # Month popup background color.
+border_color = "theme.border_strong" # Month popup border color.
 border_width = 1 # Month popup border width in points.
 corner_radius = 10 # Month popup corner radius in points.
 padding_x = 10 # Horizontal inner padding in points.
@@ -74,19 +113,19 @@ margin_y = 8 # Vertical screen-edge margin in points.
 [calendar.month.popup.calendar]
 show_week_numbers = true # Shows ISO week numbers in the month grid.
 show_event_indicators = true # Shows dots or markers for days with events.
-header_text_color = "#ffffff" # Text color for the month header.
-weekday_text_color = "#91d7e3" # Text color for weekday labels.
+header_text_color = "theme.text" # Text color for the month header.
+weekday_text_color = "theme.accent" # Text color for weekday labels.
 weekday_format = "dd" # Date format string used for weekday labels.
-day_text_color = "#d0d0d0" # Text color for days in the current month.
-outside_month_text_color = "#6e738d" # Text color for days outside the current month.
-today_cell_background_color = "#00000000" # Background color for today's day cell.
-today_cell_border_color = "#FF0000" # Border color for today's day cell.
+day_text_color = "theme.text_secondary" # Text color for days in the current month.
+outside_month_text_color = "theme.outside_month" # Text color for days outside the current month.
+today_cell_background_color = "theme.transparent" # Background color for today's day cell.
+today_cell_border_color = "theme.danger" # Border color for today's day cell.
 today_cell_border_width = 1.4 # Border width for today's day cell in points.
-indicator_color = "#8bd5ca" # Color used for event indicators in the month grid.
+indicator_color = "theme.accent_soft" # Color used for event indicators in the month grid.
 
 [calendar.month.popup.selection]
-selected_text_color = "#0B1020" # Text color for selected dates.
-selected_background_color = "#89B4FA" # Background color for selected dates.
+selected_text_color = "theme.selection_text" # Text color for selected dates.
+selected_background_color = "theme.selection_background" # Background color for selected dates.
 selection_date_format = "yyyy-MM-dd" # Format used in the selected-date summary.
 selection_date_separator = " - " # Separator used for date-range summaries.
 allows_range_selection = true # Allows selecting a start and end date range.
@@ -102,13 +141,13 @@ max_visible_appointments = 8 # Maximum number of appointments shown before trunc
 
 [calendar.month.popup.anchor]
 date_format = "EEE d MMM" # Format used for the selected-date header text.
-text_color = "#ffffff" # Text color for the selected-date header.
+text_color = "theme.text" # Text color for the selected-date header.
 show_date_text = true # Shows the selected-date header when true.
 
 [calendar.month.popup.today_button]
 title = "Today" # Button label used to jump back to today's date.
 icon = "" # Optional icon shown beside the Today button label.
-border_color = "#3F2F6B" # Border color for the Today button.
+border_color = "theme.today_button_border" # Border color for the Today button.
 border_width = 1.5 # Border width for the Today button in points.
 
 [calendar.composer]
@@ -120,3 +159,12 @@ remove_label = "Remove" # Destructive action label for deleting an appointment.
 cancel_label = "Cancel" # Secondary action label for dismissing the composer.
 delete_confirmation_title = "Remove appointment?" # Title shown in the delete confirmation prompt.
 delete_confirmation_message = "This action cannot be undone." # Message shown in the delete confirmation prompt.
+
+[calendar.composer.style]
+background_color = "theme.background" # Composer panel background color.
+border_color = "theme.border_strong" # Composer panel border color.
+border_width = 1 # Composer panel border width.
+corner_radius = 10 # Composer panel corner radius.
+padding_x = 14 # Composer horizontal padding.
+padding_y = 14 # Composer vertical padding.
+header_text_color = "theme.text" # Composer header text color.

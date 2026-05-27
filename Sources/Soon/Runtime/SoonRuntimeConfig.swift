@@ -25,6 +25,75 @@ struct SoonRuntimeConfig {
     let date: MenuBarDateConfig
   }
 
+  /// Simple theme palette used to resolve `theme.*` config color references.
+  struct Theme {
+    let colors: [String: String]
+
+    /// Returns the built-in Soon color palette.
+    static let `default` = Theme(
+      colors: [
+        "background": "#111111",
+        "surface": "#1a1a1a",
+        "surface_elevated": "#2b2b2b",
+        "surface_hover": "#202020",
+        "text": "#ffffff",
+        "text_secondary": "#d0d0d0",
+        "text_tertiary": "#c0c0c0",
+        "muted": "#6c7086",
+        "muted_secondary": "#8a8a8a",
+        "outside_month": "#6e738d",
+        "border": "#333333",
+        "border_strong": "#444444",
+        "border_subtle": "#00000000",
+        "accent": "#91d7e3",
+        "accent_secondary": "#89B4FA",
+        "accent_soft": "#8bd5ca",
+        "success": "#a6e3a1",
+        "success_secondary": "#a6da95",
+        "warning": "#f9e2af",
+        "orange": "#fab387",
+        "error": "#f38ba8",
+        "danger": "#FF0000",
+        "selection_text": "#0B1020",
+        "selection_background": "#89B4FA",
+        "transparent": "#00000000",
+        "overlay_outline": "#000000F0",
+        "overlay_text": "#FFFFFFFF",
+        "today_button_border": "#3F2F6B",
+      ]
+    )
+
+    /// Parses theme color overrides from `[theme.colors]`.
+    static func parse(from table: TOMLTable?) -> Theme {
+      guard let colorsTable = table?["colors"]?.table else {
+        return .default
+      }
+
+      var colors = Theme.default.colors
+
+      for key in colorsTable.keys {
+        guard let value = colorsTable[key]?.string else {
+          continue
+        }
+
+        colors[key] = value
+      }
+
+      return Theme(colors: colors)
+    }
+
+    /// Resolves one `theme.name` color reference to a concrete color string.
+    func resolveColorReference(_ value: String) -> String {
+      let prefix = "theme."
+      guard value.hasPrefix(prefix) else {
+        return value
+      }
+
+      let key = String(value.dropFirst(prefix.count))
+      return colors[key] ?? value
+    }
+  }
+
   /// Active config path.
   let configPath: String
   /// Whether file logging is enabled.
@@ -35,6 +104,8 @@ struct SoonRuntimeConfig {
   let loggingDirectory: String
   /// Directory for the single-instance lock.
   let lockDirectory: String
+  /// Theme used to resolve calendar color references.
+  let theme: Theme
   /// Shared calendar config.
   let calendar: CalendarBuiltinConfig
   /// Menu bar config.
@@ -76,12 +147,14 @@ struct SoonRuntimeConfig {
 
     do {
       let toml = try parsedConfig(at: configPath)
-      let calendar = try parsedCalendarConfig(from: toml)
+      let theme = Theme.parse(from: toml["theme"]?.table)
+      let calendar = try parsedCalendarConfig(from: toml, theme: theme)
 
       return LoadResult(
         config: resolvedConfig(
           from: toml,
           configPath: configPath,
+          theme: theme,
           calendar: calendar
         ),
         failure: nil
@@ -103,6 +176,7 @@ struct SoonRuntimeConfig {
   private static func resolvedConfig(
     from toml: TOMLTable,
     configPath: String,
+    theme: Theme,
     calendar: CalendarBuiltinConfig
   ) -> SoonRuntimeConfig {
 
@@ -151,6 +225,7 @@ struct SoonRuntimeConfig {
       loggingDebugEnabled: loggingDebugEnabled,
       loggingDirectory: loggingDirectory,
       lockDirectory: lockDirectory,
+      theme: theme,
       calendar: calendar,
       menuBar: menuBar
     )
@@ -158,10 +233,15 @@ struct SoonRuntimeConfig {
 
   /// Resolves one default runtime config without reading config.toml.
   private static func defaultConfig(configPath: String) -> SoonRuntimeConfig {
+    let theme = Theme.default
+
     return resolvedConfig(
       from: TOMLTable(),
       configPath: configPath,
-      calendar: .default
+      theme: theme,
+      calendar: CalendarBuiltinConfig.default.resolvingSoonThemeColorReferences(
+        using: theme.resolveColorReference
+      )
     )
   }
 }
@@ -189,8 +269,11 @@ private func parsedConfig(at path: String) throws -> TOMLTable {
   }
 }
 
-/// Parses the shared calendar config block.
-private func parsedCalendarConfig(from toml: TOMLTable) throws -> CalendarBuiltinConfig {
+/// Parses the shared calendar config block and resolves theme color references.
+private func parsedCalendarConfig(
+  from toml: TOMLTable,
+  theme: SoonRuntimeConfig.Theme
+) throws -> CalendarBuiltinConfig {
   let topLevelCalendarTable = toml["calendar"]?.table ?? TOMLTable()
 
   do {
@@ -198,7 +281,7 @@ private func parsedCalendarConfig(from toml: TOMLTable) throws -> CalendarBuilti
       from: topLevelCalendarTable,
       fallback: CalendarBuiltinConfig.default,
       path: "calendar"
-    )
+    ).resolvingSoonThemeColorReferences(using: theme.resolveColorReference)
   } catch let error as CalendarConfigError {
     throw SoonConfigError.invalidCalendar(error)
   }
@@ -211,5 +294,76 @@ private func normalizedIconKind(_ value: String?) -> String {
     return "text"
   default:
     return "sf_symbol"
+  }
+}
+
+extension CalendarBuiltinConfig {
+  /// Returns a copy with Soon theme references resolved to concrete color strings.
+  fileprivate func resolvingSoonThemeColorReferences(
+    using resolve: (String) -> String
+  ) -> CalendarBuiltinConfig {
+    var config = self
+
+    config.style.textColorHex = config.style.textColorHex.map(resolve)
+    config.style.backgroundColorHex = config.style.backgroundColorHex.map(resolve)
+    config.style.borderColorHex = config.style.borderColorHex.map(resolve)
+
+    config.anchor.topTextColorHex = config.anchor.topTextColorHex.map(resolve)
+    config.anchor.bottomTextColorHex = config.anchor.bottomTextColorHex.map(resolve)
+
+    config.appointments.eventTextColorHex = resolve(config.appointments.eventTextColorHex)
+    config.appointments.emptyTextColorHex = resolve(config.appointments.emptyTextColorHex)
+    config.appointments.secondaryTextColorHex = resolve(config.appointments.secondaryTextColorHex)
+    config.appointments.travelTextColorHex = resolve(config.appointments.travelTextColorHex)
+    config.appointments.travelIconColorHex = config.appointments.travelIconColorHex.map(resolve)
+    config.appointments.alertIconColorHex = config.appointments.alertIconColorHex.map(resolve)
+
+    config.birthdays.birthdayIconColorHex = config.birthdays.birthdayIconColorHex.map(resolve)
+
+    config.composer.style.backgroundColorHex = resolve(config.composer.style.backgroundColorHex)
+    config.composer.style.borderColorHex = resolve(config.composer.style.borderColorHex)
+    config.composer.style.headerTextColorHex = resolve(config.composer.style.headerTextColorHex)
+
+    config.upcoming.popup.backgroundColorHex = resolve(config.upcoming.popup.backgroundColorHex)
+    config.upcoming.popup.borderColorHex = resolve(config.upcoming.popup.borderColorHex)
+
+    config.month.popup.style.backgroundColorHex = resolve(config.month.popup.style.backgroundColorHex)
+    config.month.popup.style.borderColorHex = resolve(config.month.popup.style.borderColorHex)
+
+    config.month.popup.calendar.headerTextColorHex = resolve(
+      config.month.popup.calendar.headerTextColorHex
+    )
+    config.month.popup.calendar.weekdayTextColorHex = resolve(
+      config.month.popup.calendar.weekdayTextColorHex
+    )
+    config.month.popup.calendar.dayTextColorHex = resolve(
+      config.month.popup.calendar.dayTextColorHex
+    )
+    config.month.popup.calendar.outsideMonthTextColorHex = resolve(
+      config.month.popup.calendar.outsideMonthTextColorHex
+    )
+    config.month.popup.calendar.todayCellBackgroundColorHex = resolve(
+      config.month.popup.calendar.todayCellBackgroundColorHex
+    )
+    config.month.popup.calendar.todayCellBorderColorHex = resolve(
+      config.month.popup.calendar.todayCellBorderColorHex
+    )
+    config.month.popup.calendar.indicatorColorHex = resolve(
+      config.month.popup.calendar.indicatorColorHex
+    )
+
+    config.month.popup.selection.selectedTextColorHex = resolve(
+      config.month.popup.selection.selectedTextColorHex
+    )
+    config.month.popup.selection.selectedBackgroundColorHex = resolve(
+      config.month.popup.selection.selectedBackgroundColorHex
+    )
+
+    config.month.popup.anchor.textColorHex = config.month.popup.anchor.textColorHex.map(resolve)
+    config.month.popup.todayButton.borderColorHex = resolve(
+      config.month.popup.todayButton.borderColorHex
+    )
+
+    return config
   }
 }
