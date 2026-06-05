@@ -98,8 +98,8 @@ struct SoonRuntimeConfig {
   let configPath: String
   /// Whether file logging is enabled.
   let loggingEnabled: Bool
-  /// Whether debug logging is enabled.
-  let loggingDebugEnabled: Bool
+  /// Minimum runtime log level.
+  let loggingLevel: ProcessLogLevel
   /// Directory for file logs.
   let loggingDirectory: String
   /// Directory for the single-instance lock.
@@ -187,23 +187,17 @@ struct SoonRuntimeConfig {
     let menuBarDateTable = menuBarTable?["date"]?.table
 
     let loggingEnabled =
-      boolEnvironmentValue(named: SoonEnvironmentKeys.loggingEnabled)
-      ?? loggingTable?["enabled"]?.bool
+      loggingTable?["enabled"]?.bool
       ?? false
 
-    let loggingDebugEnabled =
-      boolEnvironmentValue(named: SoonEnvironmentKeys.loggingDebugEnabled)
-      ?? loggingTable?["debug"]?.bool
-      ?? false
+    let loggingLevel = resolvedLogLevel(from: loggingTable)
 
     let loggingDirectory =
-      expandedEnvironmentPath(named: SoonEnvironmentKeys.loggingDirectory)
-      ?? expandedPath(loggingTable?["directory"]?.string)
+      expandedPath(loggingTable?["directory"]?.string)
       ?? defaultSoonLoggingDirectory()
 
     let lockDirectory =
-      expandedEnvironmentPath(named: SoonEnvironmentKeys.lockDirectory)
-      ?? expandedPath(appTable?["lock_dir"]?.string)
+      expandedPath(appTable?["lock_dir"]?.string)
       ?? defaultSoonLockDirectory()
 
     let menuBar = MenuBarConfig(
@@ -222,13 +216,22 @@ struct SoonRuntimeConfig {
     return SoonRuntimeConfig(
       configPath: configPath,
       loggingEnabled: loggingEnabled,
-      loggingDebugEnabled: loggingDebugEnabled,
+      loggingLevel: loggingLevel,
       loggingDirectory: loggingDirectory,
       lockDirectory: lockDirectory,
       theme: theme,
       calendar: calendar,
       menuBar: menuBar
     )
+  }
+
+  /// Resolves the configured log level, allowing the environment to override only verbosity.
+  private static func resolvedLogLevel(from loggingTable: TOMLTable?) -> ProcessLogLevel {
+    let configuredLevel = ProcessLogLevel.normalized(loggingTable?["level"]?.string) ?? .info
+
+    return ProcessLogLevel.normalized(
+      stringEnvironmentValue(named: SoonEnvironmentKeys.loggingLevel)
+    ) ?? configuredLevel
   }
 
   /// Resolves one default runtime config without reading config.toml.

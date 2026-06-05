@@ -1,6 +1,6 @@
 [logging]
 enabled = false # Enables file logging to the directory below.
-debug = false # Enables verbose debug logging output.
+level = "info" # Minimum log level: trace | debug | info | warn | error.
 directory = "~/.local/state/soon" # Directory used for Soon log files.
 
 [app]

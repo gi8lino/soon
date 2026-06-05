@@ -86,26 +86,25 @@ Runtime defaults:
 ```text
 lock dir: /tmp/soon
 log dir: ~/.local/state/soon
+log level: info
 calendar popup mode: month
 menu bar label: calendar icon only
-debug logging: false
 file logging: false
 ```
 
 Supported environment variables:
 
 - `SOON_CONFIG_PATH`
-- `SOON_LOCK_DIR`
-- `SOON_LOGGING_ENABLED`
-- `SOON_DEBUG`
-- `SOON_LOG_DIR`
+- `SOON_LOG_LEVEL`
+
+`SOON_CONFIG_PATH` selects the config file. `SOON_LOG_LEVEL` is a temporary diagnostic override for verbosity only. Logging enablement and the log directory are configured in `config.toml`.
 
 Example config:
 
 ```toml
 [logging]
 enabled = false # Enables file logging to the directory below.
-debug = false # Enables verbose debug logging output.
+level = "info" # Minimum log level: trace | debug | info | warn | error.
 directory = "~/.local/state/soon" # Directory used for Soon log files.
 
 [app]
@@ -131,8 +130,8 @@ Example environment overrides:
 
 ```bash
 SOON_CONFIG_PATH=~/.config/soon/config.toml open "$(brew --prefix)/opt/soon/libexec/Soon.app"
-SOON_DEBUG=1 open "$(brew --prefix)/opt/soon/libexec/Soon.app"
-SOON_LOCK_DIR=/tmp/soon-dev open "$(brew --prefix)/opt/soon/libexec/Soon.app"
+SOON_LOG_LEVEL=debug open "$(brew --prefix)/opt/soon/libexec/Soon.app"
+SOON_LOG_LEVEL=trace open "$(brew --prefix)/opt/soon/libexec/Soon.app"
 ```
 
 ## Menu bar label
@@ -413,7 +412,7 @@ tail -n 200 ~/.local/state/soon/soon.out
 Run with debug logging once:
 
 ```bash
-SOON_DEBUG=1 open "$(brew --prefix)/opt/soon/libexec/Soon.app"
+SOON_LOG_LEVEL=debug open "$(brew --prefix)/opt/soon/libexec/Soon.app"
 ```
 
 Reset Calendar permission:
@@ -435,7 +434,7 @@ Common cases:
 - If the menu bar icon does not appear, check whether another Soon instance is already running.
 - If the popup opens but shows no events, Calendar permission is usually missing or denied.
 - If config changes do not apply, quit and reopen Soon.
-- If logging is enabled but no logs appear, check `SOON_LOG_DIR` or `~/.local/state/soon`.
+- If logging is enabled but no logs appear, check `[logging].directory` or `~/.local/state/soon`.
 
 Clean restart:
 

@@ -52,7 +52,7 @@ final class AppController {
   /// Configures process logging from the Soon runtime config.
   private func configureLogging(runtimeConfig: SoonRuntimeConfig) {
     services.logger.configureRuntimeLogging(
-      minimumLevel: runtimeConfig.loggingDebugEnabled ? .debug : .info,
+      minimumLevel: runtimeConfig.loggingLevel,
       fileLoggingEnabled: runtimeConfig.loggingEnabled,
       fileLoggingPath: URL(fileURLWithPath: runtimeConfig.loggingDirectory)
         .appendingPathComponent("soon.out")
