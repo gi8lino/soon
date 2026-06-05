@@ -396,6 +396,7 @@ final class SoonCalendarService {
       calendarName: sourceCalendar?.title,
       calendarColorHex: colorHex(for: sourceCalendar?.cgColor),
       location: normalizedOptionalText(event.location),
+      url: normalizedEventURLText(for: event),
       alertOffsetsSeconds: alertOffsets(for: event),
       isHoliday: isHoliday(event),
       hasAlert: !alertOffsets(for: event).isEmpty,
@@ -564,6 +565,7 @@ final class SoonCalendarService {
               calendarName: event.calendarName,
               calendarColorHex: event.calendarColorHex,
               location: event.location,
+              url: event.url,
               travelTimeSeconds: event.travelTimeSeconds
             )
           }
@@ -622,6 +624,7 @@ final class SoonCalendarService {
             calendarName: event.calendarName,
             calendarColorHex: event.calendarColorHex,
             location: event.location,
+            url: event.url,
             travelTimeSeconds: event.travelTimeSeconds
           )
         }
@@ -794,6 +797,43 @@ final class SoonCalendarService {
 
     let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
     return trimmed.isEmpty ? nil : trimmed
+  }
+
+  /// Normalizes an optional URL into transport-safe text.
+  private func normalizedOptionalURLText(_ value: URL?) -> String? {
+    normalizedOptionalText(value?.absoluteString)
+  }
+
+  /// Returns the best URL attached to one event.
+  private func normalizedEventURLText(for event: EKEvent) -> String? {
+    if let directURL = normalizedOptionalURLText(event.url) {
+      return directURL
+    }
+
+    return firstURLText(in: [event.location, event.notes])
+  }
+
+  /// Extracts the first URL from one of the provided text fields.
+  private func firstURLText(in values: [String?]) -> String? {
+    guard
+      let detector = try? NSDataDetector(
+        types: NSTextCheckingResult.CheckingType.link.rawValue
+      )
+    else {
+      return nil
+    }
+
+    for value in values {
+      guard let text = normalizedOptionalText(value) else { continue }
+      let range = NSRange(text.startIndex..<text.endIndex, in: text)
+      let matches = detector.matches(in: text, options: [], range: range)
+
+      if let url = matches.first?.url?.absoluteString {
+        return url
+      }
+    }
+
+    return nil
   }
 
   /// Maps one EventKit calendar into the shared filter target model.

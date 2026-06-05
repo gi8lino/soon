@@ -377,7 +377,10 @@ The app menu contains:
 Calendar popup actions:
 
 - click `+` to create an appointment
-- click an event to edit it
+- use the action menu on an event to edit it
+- copy event details from the action menu
+- join a meeting or open an event URL when the event contains one
+- open Calendar.app from the action menu
 - use Refresh to request a fresh calendar snapshot
 - use Today to jump back to the current day in month mode
 
@@ -489,3 +492,5 @@ open dist/Soon.app
 ## License
 
 This project is licensed under the Apache 2.0 License. See the `LICENSE` file for details.
+
+

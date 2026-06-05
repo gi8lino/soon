@@ -41,6 +41,7 @@ struct SoonMenuBarContentView: View {
         appointmentsStyle: runtimeConfig.calendar.appointmentsCalendarUIStyle,
         birthdays: runtimeConfig.calendar.birthdayCalendarUIStyle,
         emptyText: runtimeConfig.calendar.appointments.emptyText,
+        eventActions: SoonCalendarEventActionFactory.makeActions(),
         onVisibleMonthChanged: { visibleMonth in
           services.calendar.focusVisibleMonth(visibleMonth)
         },
@@ -62,6 +63,7 @@ struct SoonMenuBarContentView: View {
         appointmentsStyle: runtimeConfig.calendar.appointmentsCalendarUIStyle,
         birthdays: runtimeConfig.calendar.birthdayCalendarUIStyle,
         emptyText: runtimeConfig.calendar.appointments.emptyText,
+        eventActions: SoonCalendarEventActionFactory.makeActions(),
         onEventTap: { event in
           composerPanel.present(event: event) {
             services.calendar.refresh()
