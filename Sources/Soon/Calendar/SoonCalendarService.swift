@@ -62,17 +62,12 @@ final class SoonCalendarService {
     }
   }
 
-  /// Locale used for stable date formatting.
-  private static let formatterLocale = Locale(identifier: "en_US_POSIX")
-  /// Calendar used for stable date formatting.
-  private static let formatterCalendar = Calendar(identifier: .gregorian)
-  /// Time zone used for user-facing calendar output.
-  private static let formatterTimeZone = TimeZone.autoupdatingCurrent
-
-  /// Formatter for timed event rows.
-  private static let eventTimeFormatter = makeFormatter(format: "HH:mm")
-  /// Formatter for future day section titles.
-  private static let dayTitleFormatter = makeFormatter(format: "dd.MM.yyyy")
+  /// Calendar used for user-facing calendar output.
+  private static var formatterCalendar: Calendar {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = .autoupdatingCurrent
+    return calendar
+  }
 
   /// Runtime config used by the service.
   private let runtimeConfig: SoonRuntimeConfig
@@ -861,7 +856,11 @@ final class SoonCalendarService {
 
   /// Formats one event time for popup display.
   private func formatEventTime(_ date: Date) -> String {
-    Self.eventTimeFormatter.string(from: date)
+    CalendarDateFormatter.string(
+      from: date,
+      calendar: Self.formatterCalendar,
+      dateFormat: "HH:mm"
+    )
   }
 
   /// Returns one rendered end time for timed events when it differs from the start.
@@ -877,22 +876,20 @@ final class SoonCalendarService {
 
   /// Formats one day header for popup display.
   private func formatDayTitle(_ date: Date) -> String {
-    Self.dayTitleFormatter.string(from: date)
+    CalendarDateFormatter.string(
+      from: date,
+      calendar: Self.formatterCalendar,
+      dateFormat: "dd.MM.yyyy"
+    )
   }
 
   /// Formats one birthday date using the configured format.
   private func formatBirthdayDate(_ date: Date, format: String) -> String {
-    Self.makeFormatter(format: format).string(from: date)
-  }
-
-  /// Creates one configured formatter.
-  private static func makeFormatter(format: String) -> DateFormatter {
-    let formatter = DateFormatter()
-    formatter.locale = formatterLocale
-    formatter.calendar = formatterCalendar
-    formatter.timeZone = formatterTimeZone
-    formatter.dateFormat = format
-    return formatter
+    CalendarDateFormatter.string(
+      from: date,
+      calendar: Self.formatterCalendar,
+      dateFormat: format
+    )
   }
 
   /// Converts one calendar color into a hex string.

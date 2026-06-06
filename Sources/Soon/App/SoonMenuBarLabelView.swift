@@ -1,3 +1,4 @@
+import EasyBarCalendarPresentation
 import SwiftUI
 
 /// Compact menu bar label for Soon.
@@ -62,8 +63,10 @@ struct SoonMenuBarLabelView: View {
 
   /// Returns the formatted date label.
   private var dateText: String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = dateFormat
-    return formatter.string(from: Date())
+    CalendarDateFormatter.string(
+      from: Date(),
+      calendar: .autoupdatingCurrent,
+      dateFormat: dateFormat
+    )
   }
 }

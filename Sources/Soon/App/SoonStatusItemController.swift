@@ -1,5 +1,6 @@
 import AppKit
 import EasyBarCalendarConfig
+import EasyBarCalendarPresentation
 import SwiftUI
 
 /// Borderless floating panel used for the Soon calendar surface.
@@ -399,9 +400,11 @@ final class SoonStatusItemController: NSObject {
     let format = menuBarConfig.date.format.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !format.isEmpty else { return nil }
 
-    let formatter = DateFormatter()
-    formatter.dateFormat = format
-    return formatter.string(from: Date())
+    return CalendarDateFormatter.string(
+      from: Date(),
+      calendar: .autoupdatingCurrent,
+      dateFormat: format
+    )
   }
 
   /// Returns spacing used between text-based label parts.
