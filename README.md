@@ -349,32 +349,38 @@ delete_confirmation_title = "Remove appointment?" # Title shown in the delete co
 delete_confirmation_message = "This action cannot be undone." # Message shown in the delete confirmation prompt.
 ```
 
-Composer preset labels:
+Composer preset label overrides:
+
+Soon uses localized system labels by default. Uncomment these only when you want custom wording instead of the system language.
 
 ```toml
-[calendar.composer.alert_labels]
-none = "None" # Label shown for no alert.
-at_time = "At time of event" # Label shown for alerts at event time.
-5_minutes = "5 minutes before" # Label shown for a 5-minute alert.
-10_minutes = "10 minutes before" # Label shown for a 10-minute alert.
-15_minutes = "15 minutes before" # Label shown for a 15-minute alert.
-30_minutes = "30 minutes before" # Label shown for a 30-minute alert.
-1_hour = "1 hour before" # Label shown for a 1-hour alert.
-1_day = "1 day before" # Label shown for a 1-day alert.
-custom = "Custom" # Label shown for a custom alert lead time.
-
-[calendar.composer.travel_time_labels]
-none = "None" # Label shown when no travel time is set.
-5_minutes = "5 minutes" # Label shown for 5 minutes of travel time.
-10_minutes = "10 minutes" # Label shown for 10 minutes of travel time.
-15_minutes = "15 minutes" # Label shown for 15 minutes of travel time.
-20_minutes = "20 minutes" # Label shown for 20 minutes of travel time.
-30_minutes = "30 minutes" # Label shown for 30 minutes of travel time.
-45_minutes = "45 minutes" # Label shown for 45 minutes of travel time.
-1_hour = "1 hour" # Label shown for 1 hour of travel time.
-90_minutes = "1.5 hours" # Label shown for 90 minutes of travel time.
-2_hours = "2 hours" # Label shown for 2 hours of travel time.
-custom = "Custom" # Label shown for a custom travel time.
+# Optional composer preset label overrides.
+# Soon uses localized system labels by default. Uncomment this block only when
+# you want custom wording instead of the system language.
+#
+# [calendar.composer.alert_labels]
+# none = "None" # Overrides the label shown for no alert.
+# at_time = "At time of event" # Overrides the label shown for alerts at event time.
+# 5_minutes = "5 minutes before" # Overrides the label shown for a 5-minute alert.
+# 10_minutes = "10 minutes before" # Overrides the label shown for a 10-minute alert.
+# 15_minutes = "15 minutes before" # Overrides the label shown for a 15-minute alert.
+# 30_minutes = "30 minutes before" # Overrides the label shown for a 30-minute alert.
+# 1_hour = "1 hour before" # Overrides the label shown for a 1-hour alert.
+# 1_day = "1 day before" # Overrides the label shown for a 1-day alert.
+# custom = "Custom" # Overrides the label shown for a custom alert lead time.
+#
+# [calendar.composer.travel_time_labels]
+# none = "None" # Overrides the label shown when no travel time is set.
+# 5_minutes = "5 minutes" # Overrides the label shown for 5 minutes of travel time.
+# 10_minutes = "10 minutes" # Overrides the label shown for 10 minutes of travel time.
+# 15_minutes = "15 minutes" # Overrides the label shown for 15 minutes of travel time.
+# 20_minutes = "20 minutes" # Overrides the label shown for 20 minutes of travel time.
+# 30_minutes = "30 minutes" # Overrides the label shown for 30 minutes of travel time.
+# 45_minutes = "45 minutes" # Overrides the label shown for 45 minutes of travel time.
+# 1_hour = "1 hour" # Overrides the label shown for 1 hour of travel time.
+# 90_minutes = "1.5 hours" # Overrides the label shown for 90 minutes of travel time.
+# 2_hours = "2 hours" # Overrides the label shown for 2 hours of travel time.
+# custom = "Custom" # Overrides the label shown for a custom travel time.
 ```
 
 ## Usage
@@ -520,7 +526,3 @@ open dist/Soon.app
 ## License
 
 This project is licensed under the Apache 2.0 License. See the `LICENSE` file for details.
-
-
-
-
