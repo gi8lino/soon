@@ -52,7 +52,7 @@ endif
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all prepare-version build app bundle package release fmt test clean clean-dist run dev stop icons \
+.PHONY: help all prepare-version build app bundle package release fmt test clean clean-dist run dev stop icons restart-brew \
         build-app verify verify-release stamp-plist sign \
         print-arch print-version print-latest-tag print-package-sha256 \
         tag-patch tag-minor tag-major push-tags
@@ -200,6 +200,9 @@ stop: ## Stop Homebrew and local Soon app instances.
 	fi
 	@pkill -x "$(APP_EXEC)" >/dev/null 2>&1 || true
 	@pkill -f "$(abspath $(APP_BIN))" >/dev/null 2>&1 || true
+
+restart-brew: ## Restart Soon Homebrew services.
+	brew services restart gi8lino/tap/soon
 
 ##@ Cleanup
 
