@@ -323,7 +323,14 @@ final class SoonStatusItemController: NSObject {
 
   /// Terminates Soon.
   @objc private func quit(_ sender: Any?) {
-    NSApp.terminate(nil)
+    // Leave AppKit's nested menu-tracking loop before terminating. Terminating
+    // from inside that loop can leave the app waiting for the context menu to
+    // finish tracking first.
+    contextMenu?.cancelTrackingWithoutAnimation()
+
+    DispatchQueue.main.async {
+      NSApp.terminate(nil)
+    }
   }
 
   /// Starts a timer when the configured label contains date text.
