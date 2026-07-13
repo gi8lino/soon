@@ -112,20 +112,25 @@ struct SoonRuntimeConfig {
   let menuBar: MenuBarConfig
 
   /// Captured result of the initial process-wide load.
+  @MainActor
   private static let initialLoadResult = performLoad()
 
   /// Process-wide loaded runtime config.
+  @MainActor
   static private(set) var current = initialLoadResult.config
   /// Most recent config load failure, cleared after a successful reload.
+  @MainActor
   static private(set) var lastLoadFailure = initialLoadResult.failure
 
   /// Loads the Soon runtime config from env, config file, and defaults.
+  @MainActor
   static func load() -> SoonRuntimeConfig {
     return current
   }
 
   /// Reloads the process-wide runtime config from disk.
   @discardableResult
+  @MainActor
   static func reloadCurrent() -> LoadResult {
     let result = performLoad(fallbackConfig: current)
     current = result.config
