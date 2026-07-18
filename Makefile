@@ -22,11 +22,14 @@ PACKAGE_ZIP := $(DIST_DIR)/$(PACKAGE_NAME)
 PACKAGE_STAGE := $(DIST_DIR)/package
 PACKAGE_ROOT := $(APP_NAME)-$(VERSION)
 
-BUILD_INFO := Sources/Soon/Runtime/BuildInfo.swift
+BUILD_VERSION_FILE := .build/soon-build-version
 
 BUNDLE_ID ?= io.github.gi8lino.soon
 VERSION ?= dev
 ARCH ?= universal
+RUN_ARCH ?= arm64
+LOCAL_INSTALL_ARCH ?= $(RUN_ARCH)
+LOCAL_APP_DIR ?= $(HOME)/Applications
 
 VERSION_PREFIX ?= v
 LATEST_TAG := $(shell git tag --list '$(VERSION_PREFIX)*' --sort=-v:refname | head -n 1)
@@ -52,9 +55,9 @@ endif
 
 .DEFAULT_GOAL := help
 
-.PHONY: help all prepare-version build app bundle package release fmt test clean clean-dist run dev stop icons restart-brew \
+.PHONY: help all prepare-version build app bundle package release fmt test clean clean-dist run dev install-local stop icons restart-brew \
         build-app verify verify-release stamp-plist sign \
-        print-arch print-version print-latest-tag print-package-sha256 \
+        print-arch print-version print-local-version print-latest-tag print-package-sha256 \
         tag-patch tag-minor tag-major push-tags
 
 help: ## Display this help.
@@ -64,11 +67,15 @@ help: ## Display this help.
 
 all: build ## Build the default artifacts.
 
-prepare-version: ## Update BuildInfo.swift with the selected VERSION.
-	@mkdir -p "$(dir $(BUILD_INFO))"
-	@python3 -c 'from pathlib import Path; import re; path = Path("$(BUILD_INFO)"); text = path.read_text(); \
-updated = re.sub(r"public static let appVersion = \".*?\"", "public static let appVersion = \"$(VERSION)\"", text, count=1); \
-path.write_text(updated)'
+prepare-version: ## Write the version consumed by the SwiftPM build plugin.
+	@mkdir -p "$(dir $(BUILD_VERSION_FILE))"
+	@temporary_file="$(BUILD_VERSION_FILE).tmp.$$$$"; \
+	printf '%s\n' "$(VERSION)" >"$$temporary_file"; \
+	if [ -f "$(BUILD_VERSION_FILE)" ] && cmp -s "$$temporary_file" "$(BUILD_VERSION_FILE)"; then \
+		rm -f "$$temporary_file"; \
+	else \
+		mv -f "$$temporary_file" "$(BUILD_VERSION_FILE)"; \
+	fi
 
 build: bundle ## Build the app bundle for the selected ARCH.
 
@@ -185,14 +192,31 @@ verify-release: ## Validate the release package and print release fingerprints.
 	@shasum -a 256 "$(PACKAGE_ZIP)"
 	@codesign -dv --verbose=4 "$(APP_BUNDLE)" 2>&1 || true
 
-run: bundle ## Build, stop old instances, and open Soon.
+run: ## Build and run with a Git-derived local version.
+	@local_version="$$(scripts/dev/local-version.sh --version-prefix "$(VERSION_PREFIX)")"; \
+		echo "Building local version $$local_version"; \
+		$(MAKE) --no-print-directory bundle ARCH="$(ARCH)" VERSION="$$local_version"
 	@$(MAKE) --no-print-directory stop
 	@open "$(APP_BUNDLE)"
 
-dev: prepare-version ## Fast debug run without bundling.
+dev: ## Fast debug run with a Git-derived local version.
 	@$(MAKE) --no-print-directory stop
-	@$(SWIFT_BUILD_DEBUG) --product $(APP_PRODUCT)
-	@swift run -c debug $(APP_PRODUCT)
+	@local_version="$$(scripts/dev/local-version.sh --version-prefix "$(VERSION_PREFIX)")"; \
+		echo "Building local version $$local_version"; \
+		$(MAKE) --no-print-directory prepare-version VERSION="$$local_version"; \
+		$(SWIFT_BUILD_DEBUG) --product $(APP_PRODUCT); \
+		swift run -c debug $(APP_PRODUCT)
+
+install-local: ## Build and install the current checkout with a Git-derived local version.
+	@local_version="$$(scripts/dev/local-version.sh --version-prefix "$(VERSION_PREFIX)")"; \
+		echo "Building local version $$local_version"; \
+		$(MAKE) --no-print-directory bundle \
+			ARCH="$(LOCAL_INSTALL_ARCH)" \
+			VERSION="$$local_version" \
+			BUNDLE_ID="$(BUNDLE_ID)"
+	@scripts/dev/install-local.sh \
+		--dist-dir "$(DIST_DIR)" \
+		--app-dir "$(LOCAL_APP_DIR)"
 
 stop: ## Stop Homebrew and local Soon app instances.
 	@if command -v brew >/dev/null 2>&1; then \
@@ -209,11 +233,8 @@ restart-brew: ## Restart Soon Homebrew services.
 clean-dist: ## Remove dist/.
 	@rm -rf "$(DIST_DIR)"
 
-clean: ## Remove dist/, .build, and reset BuildInfo.swift to its placeholder version.
+clean: ## Remove dist/ and .build/.
 	@rm -rf "$(DIST_DIR)" ".build"
-	@python3 -c 'from pathlib import Path; import re; path = Path("$(BUILD_INFO)"); text = path.read_text(); \
-updated = re.sub(r"public static let appVersion = \".*?\"", "public static let appVersion = \"dev\"", text, count=1); \
-path.write_text(updated)'
 
 ##@ Info
 
@@ -222,6 +243,9 @@ print-arch: ## Print the selected ARCH.
 
 print-version: ## Print the current version derived from the latest tag.
 	@echo "$(CURRENT_VERSION)"
+
+print-local-version: ## Print the Git-derived local development version.
+	@scripts/dev/local-version.sh --version-prefix "$(VERSION_PREFIX)"
 
 print-latest-tag: ## Print the latest matching git tag.
 	@echo "$(LATEST_TAG)"

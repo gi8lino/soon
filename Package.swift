@@ -17,6 +17,10 @@ let package = Package(
   ],
   targets: [
     .executableTarget(
+      name: "SoonGenerateBuildInfo",
+      path: "Sources/SoonGenerateBuildInfo"
+    ),
+    .executableTarget(
       name: "Soon",
       dependencies: [
         .product(name: "EasyBarShared", package: "easybar"),
@@ -26,11 +30,21 @@ let package = Package(
         .product(name: "TOMLKit", package: "TOMLKit"),
       ],
       path: "Sources/Soon",
+      plugins: [
+        .plugin(name: "SoonBuildInfoPlugin")
+      ]
     ),
     .testTarget(
       name: "SoonTests",
       dependencies: ["Soon"],
       path: "Tests/SoonTests",
+    ),
+    .plugin(
+      name: "SoonBuildInfoPlugin",
+      capability: .buildTool(),
+      dependencies: [
+        "SoonGenerateBuildInfo"
+      ]
     ),
   ]
 )
