@@ -6,8 +6,9 @@ import Foundation
 /// Builds host-side quick actions for Soon calendar appointment rows.
 enum SoonCalendarEventActionFactory {
   /// Returns the default action set used by Soon calendar popups.
-  static func makeActions() -> CalendarEventActions {
+  static func makeActions(meetingURLPatterns: [String]) -> CalendarEventActions {
     CalendarEventActions(
+      meetingURLPatterns: meetingURLPatterns,
       copyDetails: { event in
         copyDetails(for: event)
       },

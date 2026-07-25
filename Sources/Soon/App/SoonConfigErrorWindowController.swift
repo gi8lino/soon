@@ -1,8 +1,8 @@
 import AppKit
 import EasyBarCalendarConfig
 import EasyBarShared
+import SwiftTOMLEdit
 import SwiftUI
-import TOMLKit
 
 /// Config load failure contexts used for Soon's shared error window copy.
 enum SoonConfigLoadFailureContext {
@@ -241,15 +241,16 @@ final class SoonConfigErrorWindowController: NSObject, NSWindowDelegate {
     case .initialLoad:
       return "Soon is running with fallback defaults until the config is fixed and reloaded."
     case .reloadKeptPreviousConfig:
-      return "The previous working config is still active. Fix the file and reload config to apply the changes."
+      return
+        "The previous working config is still active. Fix the file and reload config to apply the changes."
     }
   }
 }
 
 /// Converts one TOML parse error into Soon's user-facing config error.
 func makeSoonParseFailure(from error: TOMLParseError, text: String) -> SoonConfigError {
-  let line = positive(Int(error.source.begin.line))
-  let column = positive(Int(error.source.begin.column))
+  let line = positive(error.line)
+  let column = positive(error.column)
   let lines = text.components(separatedBy: .newlines)
   let lineText = sourceLine(in: lines, line: line)
 
@@ -259,7 +260,7 @@ func makeSoonParseFailure(from error: TOMLParseError, text: String) -> SoonConfi
   let value = valueText(from: lineText)
 
   return SoonConfigError.parseFailure(
-    message: error.description,
+    message: error.message,
     line: line,
     column: column,
     item: item,
@@ -268,8 +269,8 @@ func makeSoonParseFailure(from error: TOMLParseError, text: String) -> SoonConfi
 }
 
 /// Returns a positive integer or nil.
-private func positive(_ value: Int) -> Int? {
-  guard value > 0 else {
+private func positive(_ value: Int?) -> Int? {
+  guard let value, value > 0 else {
     return nil
   }
 

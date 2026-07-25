@@ -1,7 +1,7 @@
 import EasyBarCalendarConfig
 import EasyBarShared
 import Foundation
-import TOMLKit
+import SwiftTOMLEdit
 
 /// Resolved runtime config used by Soon.
 struct SoonRuntimeConfig {
@@ -316,13 +316,15 @@ extension CalendarBuiltinConfig {
     config.style.backgroundColorHex = config.style.backgroundColorHex.map(resolve)
     config.style.borderColorHex = config.style.borderColorHex.map(resolve)
 
-    config.anchor.topTextColorHex = config.anchor.topTextColorHex.map(resolve)
-    config.anchor.bottomTextColorHex = config.anchor.bottomTextColorHex.map(resolve)
+    config.anchor.time.textColorHex = config.anchor.time.textColorHex.map(resolve)
+    config.anchor.date.textColorHex = config.anchor.date.textColorHex.map(resolve)
 
     config.appointments.eventTextColorHex = resolve(config.appointments.eventTextColorHex)
     config.appointments.emptyTextColorHex = resolve(config.appointments.emptyTextColorHex)
     config.appointments.secondaryTextColorHex = resolve(config.appointments.secondaryTextColorHex)
     config.appointments.travelTextColorHex = resolve(config.appointments.travelTextColorHex)
+    config.appointments.locationIconColorHex =
+      config.appointments.locationIconColorHex.map(resolve)
     config.appointments.travelIconColorHex = config.appointments.travelIconColorHex.map(resolve)
     config.appointments.alertIconColorHex = config.appointments.alertIconColorHex.map(resolve)
 
@@ -335,7 +337,8 @@ extension CalendarBuiltinConfig {
     config.upcoming.popup.backgroundColorHex = resolve(config.upcoming.popup.backgroundColorHex)
     config.upcoming.popup.borderColorHex = resolve(config.upcoming.popup.borderColorHex)
 
-    config.month.popup.style.backgroundColorHex = resolve(config.month.popup.style.backgroundColorHex)
+    config.month.popup.style.backgroundColorHex = resolve(
+      config.month.popup.style.backgroundColorHex)
     config.month.popup.style.borderColorHex = resolve(config.month.popup.style.borderColorHex)
 
     config.month.popup.calendar.headerTextColorHex = resolve(

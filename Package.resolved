@@ -1,22 +1,22 @@
 {
-  "originHash" : "0fedf0032e918001940d7a55ac232ef30710208ecaf71d7cb9b6b98db0d9dc57",
+  "originHash" : "3dd0f23d6d433f4e8acafcce42639ca37a50d5ff7bb0087f8dcbe55c4717145c",
   "pins" : [
     {
       "identity" : "easybar",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gi8lino/easybar",
       "state" : {
-        "revision" : "5a0be8ea5275c2b8d2931a7750f9962b59e0dea4",
-        "version" : "0.30.2"
+        "revision" : "01e81d1c0ec191c0a675be391116b9b7454cf0ff",
+        "version" : "0.30.3"
       }
     },
     {
-      "identity" : "tomlkit",
+      "identity" : "swifttomledit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LebJe/TOMLKit",
+      "location" : "https://github.com/gi8lino/SwiftTOMLEdit.git",
       "state" : {
-        "revision" : "ec6198d37d495efc6acd4dffbd262cdca7ff9b3f",
-        "version" : "0.6.0"
+        "revision" : "3093ba28bbaf00b1fe6ccbcddc5ebc1e4695d81c",
+        "version" : "0.0.1"
       }
     }
   ],

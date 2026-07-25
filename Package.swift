@@ -12,8 +12,11 @@ let package = Package(
   ],
   dependencies: [
     //.package(path: "../easybar"),
-    .package(url: "https://github.com/gi8lino/easybar", from: "0.30.2"),
-    .package(url: "https://github.com/LebJe/TOMLKit", from: "0.6.0"),
+    .package(url: "https://github.com/gi8lino/easybar", from: "0.30.3"),
+    .package(
+      url: "https://github.com/gi8lino/SwiftTOMLEdit.git",
+      exact: "0.0.1"
+    ),
   ],
   targets: [
     .executableTarget(
@@ -25,9 +28,10 @@ let package = Package(
       dependencies: [
         .product(name: "EasyBarShared", package: "easybar"),
         .product(name: "EasyBarCalendarConfig", package: "easybar"),
+        .product(name: "EasyBarCalendarCore", package: "easybar"),
         .product(name: "EasyBarCalendarPresentation", package: "easybar"),
         .product(name: "EasyBarCalendarUI", package: "easybar"),
-        .product(name: "TOMLKit", package: "TOMLKit"),
+        .product(name: "SwiftTOMLEdit", package: "swifttomledit"),
       ],
       path: "Sources/Soon",
       plugins: [
@@ -36,7 +40,10 @@ let package = Package(
     ),
     .testTarget(
       name: "SoonTests",
-      dependencies: ["Soon"],
+      dependencies: [
+        "Soon",
+        .product(name: "SwiftTOMLEdit", package: "swifttomledit"),
+      ],
       path: "Tests/SoonTests",
     ),
     .plugin(
