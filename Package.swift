@@ -15,7 +15,7 @@ let package = Package(
     .package(url: "https://github.com/gi8lino/easybar", from: "0.30.3"),
     .package(
       url: "https://github.com/gi8lino/SwiftTOMLEdit.git",
-      exact: "0.0.1"
+      exact: "0.0.3"
     ),
   ],
   targets: [
