@@ -12,10 +12,13 @@ let package = Package(
   ],
   dependencies: [
     //.package(path: "../easybar"),
-    .package(url: "https://github.com/gi8lino/easybar", from: "0.30.6"),
+    .package(
+      url: "https://github.com/gi8lino/easybar",
+      from: "0.30.6",
+    ),
     .package(
       url: "https://github.com/gi8lino/SwiftTOMLEdit.git",
-      exact: "0.0.4"
+      from: "0.0.4",
     ),
   ],
   targets: [
