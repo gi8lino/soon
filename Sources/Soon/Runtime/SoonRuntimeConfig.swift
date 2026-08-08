@@ -371,9 +371,6 @@ extension CalendarBuiltinConfig {
     )
 
     config.month.popup.anchor.textColorHex = config.month.popup.anchor.textColorHex.map(resolve)
-    config.month.popup.todayButton.borderColorHex = resolve(
-      config.month.popup.todayButton.borderColorHex
-    )
 
     return config
   }
