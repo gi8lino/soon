@@ -14,7 +14,7 @@ let package = Package(
     //.package(path: "../easybar"),
     .package(
       url: "https://github.com/easybar-app/easybar",
-      from: "0.43.0",
+      from: "0.63.0",
     ),
     .package(
       url: "https://github.com/gi8lino/SwiftTOMLEdit.git",
