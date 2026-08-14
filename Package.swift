@@ -11,10 +11,10 @@ let package = Package(
     .executable(name: "Soon", targets: ["Soon"])
   ],
   dependencies: [
-    //.package(path: "../easybar"),
+    //.package(path: "../easybar-kit"),
     .package(
-      url: "https://github.com/easybar-app/easybar",
-      from: "0.43.0",
+      url: "https://github.com/easybar-app/easybar-kit",
+      from: "0.3.0",
     ),
     .package(
       url: "https://github.com/gi8lino/SwiftTOMLEdit.git",
@@ -29,11 +29,11 @@ let package = Package(
     .executableTarget(
       name: "Soon",
       dependencies: [
-        .product(name: "EasyBarShared", package: "easybar"),
-        .product(name: "EasyBarCalendarConfig", package: "easybar"),
-        .product(name: "EasyBarCalendarCore", package: "easybar"),
-        .product(name: "EasyBarCalendarPresentation", package: "easybar"),
-        .product(name: "EasyBarCalendarUI", package: "easybar"),
+        .product(name: "EasyBarShared", package: "easybar-kit"),
+        .product(name: "EasyBarCalendarConfig", package: "easybar-kit"),
+        .product(name: "EasyBarCalendarCore", package: "easybar-kit"),
+        .product(name: "EasyBarCalendarPresentation", package: "easybar-kit"),
+        .product(name: "EasyBarCalendarUI", package: "easybar-kit"),
         .product(name: "SwiftTOMLEdit", package: "swifttomledit"),
       ],
       path: "Sources/Soon",

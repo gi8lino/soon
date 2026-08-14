@@ -657,7 +657,7 @@ final class SoonCalendarService {
   private func resolvedCalendar() -> Calendar {
     var calendar = Calendar.current
 
-    if let firstWeekday = runtimeConfig.calendar.month.popup.firstWeekday {
+    if let firstWeekday = runtimeConfig.calendar.month.popup.calendar.firstWeekday {
       calendar.firstWeekday = firstWeekday
     }
 
@@ -837,7 +837,6 @@ final class SoonCalendarService {
     CalendarFilterTarget(
       title: calendar.title,
       identifier: calendar.calendarIdentifier,
-      sourceTitle: calendar.source.title,
       sourceIdentifier: calendar.source.sourceIdentifier
     )
   }

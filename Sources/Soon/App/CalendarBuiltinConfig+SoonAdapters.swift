@@ -1,7 +1,6 @@
 import EasyBarCalendarConfig
 import EasyBarCalendarPresentation
-import EasyBarCalendarUI
-import Foundation
+import EasyBarShared
 
 extension CalendarBuiltinConfig {
   var soonPresentationFilters: CalendarRequestFilters {
@@ -73,89 +72,100 @@ extension CalendarBuiltinConfig {
   }
 
   var calendarComposerUIConfig: CalendarComposerConfig {
-    CalendarComposerConfig(
-      createTitle: composer.createTitle,
-      editTitle: composer.editTitle,
-      saveLabel: composer.saveLabel,
-      updateLabel: composer.updateLabel,
-      removeLabel: composer.removeLabel,
-      cancelLabel: composer.cancelLabel,
-      deleteConfirmationTitle: composer.deleteConfirmationTitle,
-      deleteConfirmationMessage: composer.deleteConfirmationMessage,
-      openCalendarLabel: composer.openCalendarLabel,
-      titleLabel: composer.titleLabel,
-      titlePlaceholder: composer.titlePlaceholder,
-      locationLabel: composer.locationLabel,
-      locationPlaceholder: composer.locationPlaceholder,
-      calendarLabel: composer.calendarLabel,
-      allDayLabel: composer.allDayLabel,
-      startLabel: composer.startLabel,
-      endLabel: composer.endLabel,
-      travelTimeLabel: composer.travelTimeLabel,
-      alertLabel: composer.alertLabel,
-      addAlertLabel: composer.addAlertLabel,
-      defaultCalendarName: composer.defaultCalendarName,
-      defaultAlert: composer.defaultAlert,
-      defaultTravelTime: composer.defaultTravelTime,
-      alertLabels: composer.alertLabels,
-      travelTimeLabels: composer.travelTimeLabels,
-      paddingX: composer.paddingX,
-      paddingY: composer.paddingY,
-      backgroundColorHex: composer.backgroundColorHex,
-      borderColorHex: composer.borderColorHex,
-      borderWidth: composer.borderWidth,
-      cornerRadius: composer.cornerRadius,
-      headerTextColorHex: composer.headerTextColorHex,
+    let style = composer.style
+    let content = composer.content
+
+    return CalendarComposerConfig(
+      createTitle: content.createTitle,
+      editTitle: content.editTitle,
+      saveLabel: content.saveLabel,
+      updateLabel: content.updateLabel,
+      removeLabel: content.removeLabel,
+      cancelLabel: content.cancelLabel,
+      deleteConfirmationTitle: content.deleteConfirmationTitle,
+      deleteConfirmationMessage: content.deleteConfirmationMessage,
+      openCalendarLabel: content.openCalendarLabel,
+      titleLabel: content.titleLabel,
+      titlePlaceholder: content.titlePlaceholder,
+      locationLabel: content.locationLabel,
+      locationPlaceholder: content.locationPlaceholder,
+      calendarLabel: content.calendarLabel,
+      allDayLabel: content.allDayLabel,
+      startLabel: content.startLabel,
+      endLabel: content.endLabel,
+      travelTimeLabel: content.travelTimeLabel,
+      alertLabel: content.alertLabel,
+      addAlertLabel: content.addAlertLabel,
+      defaultCalendarName: content.defaultCalendarName,
+      defaultAlert: content.defaultAlert,
+      defaultTravelTime: content.defaultTravelTime,
+      alertLabels: content.alertLabels,
+      travelTimeLabels: content.travelTimeLabels,
+      paddingX: style.paddingX,
+      paddingY: style.paddingY,
+      backgroundColorHex: style.backgroundColorHex,
+      borderColorHex: style.borderColorHex,
+      borderWidth: style.borderWidth,
+      cornerRadius: style.cornerRadius,
+      headerTextColorHex: style.headerTextColorHex,
       secondaryTextColorHex: appointments.secondaryTextColorHex
     )
   }
 
   var calendarMonthPopupUIConfig: CalendarMonthPopupConfig {
-    CalendarMonthPopupConfig(
-      backgroundColorHex: month.popup.backgroundColorHex,
-      borderColorHex: month.popup.borderColorHex,
-      borderWidth: month.popup.borderWidth,
-      cornerRadius: month.popup.cornerRadius,
-      paddingX: month.popup.paddingX,
-      paddingY: month.popup.paddingY,
-      spacing: month.popup.spacing,
-      marginX: month.popup.marginX,
-      marginY: month.popup.marginY,
-      showWeekNumbers: month.popup.showWeekNumbers,
-      showEventIndicators: month.popup.showEventIndicators,
-      headerTextColorHex: month.popup.headerTextColorHex,
-      weekdayTextColorHex: month.popup.weekdayTextColorHex,
-      firstWeekday: month.popup.firstWeekday,
-      resolvedWeekdaySymbols: month.popup.resolvedWeekdaySymbols,
-      dayTextColorHex: month.popup.dayTextColorHex,
-      outsideMonthTextColorHex: month.popup.outsideMonthTextColorHex,
-      todayCellBackgroundColorHex: month.popup.todayCellBackgroundColorHex,
-      todayCellBorderColorHex: month.popup.todayCellBorderColorHex,
-      todayCellBorderWidth: month.popup.todayCellBorderWidth,
-      todayMarkerVariant: month.popup.todayMarkerVariant.soonTodayMarkerVariant,
-      todayMarkerSize: month.popup.todayMarkerSize,
-      indicatorColorHex: month.popup.indicatorColorHex,
-      selectedTextColorHex: month.popup.selectedTextColorHex,
-      selectedBackgroundColorHex: month.popup.selectedBackgroundColorHex,
-      selectionDateFormat: month.popup.selectionDateFormat,
-      selectionDateSeparator: month.popup.selectionDateSeparator,
-      allowsRangeSelection: month.popup.allowsRangeSelection,
-      resetSelectionOnThirdTap: month.popup.resetSelectionOnThirdTap,
-      layout: month.popup.layout.soonCalendarMonthPopupLayout,
-      appointmentsScrollable: month.popup.appointmentsScrollable,
-      appointmentsMinHeight: month.popup.appointmentsMinHeight,
-      appointmentsMaxHeight: month.popup.appointmentsMaxHeight,
-      agendaTitle: month.popup.agendaTitle,
-      maxVisibleAppointments: month.popup.maxVisibleAppointments,
-      anchorDateFormat: month.popup.anchor.dateFormat,
-      anchorTextColorHex: month.popup.anchor.textColorHex,
-      anchorShowDateText: month.popup.anchor.showDateText,
-      todayButtonTitle: month.popup.todayButtonTitle,
-      todayButtonIcon: month.popup.todayButtonIcon,
-      todayButtonPaddingX: month.popup.todayButtonPaddingX,
-      todayButtonPaddingY: month.popup.todayButtonPaddingY,
-      todayButtonMarginX: month.popup.todayButtonMarginX,
-      todayButtonMarginY: month.popup.todayButtonMarginY
+    let popup = month.popup
+    let style = popup.style
+    let calendar = popup.calendar
+    let selection = popup.selection
+    let agenda = popup.agenda
+    let anchor = popup.anchor
+    let todayButton = popup.todayButton
+
+    return CalendarMonthPopupConfig(
+      backgroundColorHex: style.backgroundColorHex,
+      borderColorHex: style.borderColorHex,
+      borderWidth: style.borderWidth,
+      cornerRadius: style.cornerRadius,
+      paddingX: style.paddingX,
+      paddingY: style.paddingY,
+      spacing: style.spacing,
+      marginX: style.marginX,
+      marginY: style.marginY,
+      showWeekNumbers: calendar.showWeekNumbers,
+      showEventIndicators: calendar.showEventIndicators,
+      headerTextColorHex: calendar.headerTextColorHex,
+      weekdayTextColorHex: calendar.weekdayTextColorHex,
+      firstWeekday: calendar.firstWeekday,
+      resolvedWeekdaySymbols: calendar.resolvedWeekdaySymbols,
+      dayTextColorHex: calendar.dayTextColorHex,
+      outsideMonthTextColorHex: calendar.outsideMonthTextColorHex,
+      todayCellBackgroundColorHex: calendar.todayCellBackgroundColorHex,
+      todayCellBorderColorHex: calendar.todayCellBorderColorHex,
+      todayCellBorderWidth: calendar.todayCellBorderWidth,
+      todayMarkerVariant: calendar.todayMarkerVariant,
+      todayMarkerSize: calendar.todayMarkerSize,
+      indicatorColorHex: calendar.indicatorColorHex,
+      selectedTextColorHex: selection.selectedTextColorHex,
+      selectedBackgroundColorHex: selection.selectedBackgroundColorHex,
+      selectionDateFormat: selection.selectionDateFormat,
+      selectionDateSeparator: selection.selectionDateSeparator,
+      allowsRangeSelection: selection.allowsRangeSelection,
+      resetSelectionOnThirdTap: selection.resetSelectionOnThirdTap,
+      layout: agenda.layout,
+      appointmentsScrollable: agenda.appointmentsScrollable,
+      appointmentsMinHeight: agenda.appointmentsMinHeight,
+      appointmentsMaxHeight: agenda.appointmentsMaxHeight,
+      agendaTitle: agenda.agendaTitle,
+      maxVisibleAppointments: agenda.maxVisibleAppointments,
+      anchorDateFormat: anchor.dateFormat,
+      anchorTextColorHex: anchor.textColorHex,
+      anchorShowDateText: anchor.showDateText,
+      todayButtonTitle: todayButton.title,
+      todayButtonIcon: todayButton.icon,
+      todayButtonPaddingX: todayButton.paddingX,
+      todayButtonPaddingY: todayButton.paddingY,
+      todayButtonMarginX: todayButton.marginX,
+      todayButtonMarginY: todayButton.marginY
     )
   }
 
@@ -172,39 +182,9 @@ extension CalendarBuiltinConfig {
       spacing: upcoming.popup.spacing,
       marginX: upcoming.popup.marginX,
       marginY: upcoming.popup.marginY,
-      firstWeekday: month.popup.firstWeekday,
-      selectionDateFormat: month.popup.selectionDateFormat,
-      defaultIndicatorColorHex: month.popup.indicatorColorHex
+      firstWeekday: month.popup.calendar.firstWeekday,
+      selectionDateFormat: month.popup.selection.selectionDateFormat,
+      defaultIndicatorColorHex: month.popup.calendar.indicatorColorHex
     )
-  }
-}
-
-extension MonthCalendarPopupLayout {
-  fileprivate var soonCalendarMonthPopupLayout: CalendarMonthPopupLayout {
-    switch self {
-    case .calendarAppointmentsHorizontal:
-      return .calendarAppointmentsHorizontal
-    case .appointmentsCalendarHorizontal:
-      return .appointmentsCalendarHorizontal
-    case .calendarAppointmentsVertical:
-      return .calendarAppointmentsVertical
-    case .appointmentsCalendarVertical:
-      return .appointmentsCalendarVertical
-    }
-  }
-}
-
-extension CalendarTodayMarkerVariant {
-  fileprivate var soonTodayMarkerVariant: TodayMarkerVariant {
-    switch self {
-    case .regularRoundedRectangle:
-      return .regularRoundedRectangle
-    case .softWobble:
-      return .softWobble
-    case .doubleSketch:
-      return .doubleSketch
-    case .openLoop:
-      return .openLoop
-    }
   }
 }
