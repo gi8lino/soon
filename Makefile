@@ -41,9 +41,10 @@ NEXT_PATCH := $(shell python3 -c 'm,n,p=map(int,"$(CURRENT_VERSION)".split("."))
 NEXT_MINOR := $(shell python3 -c 'm,n,p=map(int,"$(CURRENT_VERSION)".split(".")); print(f"{m}.{n+1}.0")')
 NEXT_MAJOR := $(shell python3 -c 'm,n,p=map(int,"$(CURRENT_VERSION)".split(".")); print(f"{m+1}.0.0")')
 
-SWIFT_BUILD_RELEASE := swift build -c release
-SWIFT_BUILD_DEBUG := swift build -c debug
-SWIFT_TEST := swift test --scratch-path .build
+# Native planning builds plugin tools for the host during cross-architecture builds.
+SWIFT_BUILD_RELEASE := swift build --build-system native -c release
+SWIFT_BUILD_DEBUG := swift build --build-system native -c debug
+SWIFT_TEST := swift test --build-system native --scratch-path .build
 
 ifeq ($(ARCH),universal)
 ARCHES := arm64 x86_64

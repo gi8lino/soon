@@ -354,6 +354,8 @@ final class SoonCalendarService {
         filterTarget(for: calendar),
         includedTitleTokens: query.includedCalendarNames,
         excludedTitleTokens: query.excludedCalendarNames,
+        includedSourceTitleTokens: query.includedCalendarSourceNames,
+        excludedSourceTitleTokens: query.excludedCalendarSourceNames,
         includedCalendarIDTokens: query.includedCalendarIDs,
         excludedCalendarIDTokens: query.excludedCalendarIDs,
         includedSourceIDTokens: query.includedCalendarSourceIDs,
