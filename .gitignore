@@ -10,3 +10,7 @@ agent/WiFiSnitch.app/Contents/MacOS/WiFiSnitch
 dist/
 Library/*
 .swiftpm-*
+
+/bin/*
+!/bin/dev-tools.mk
+
