@@ -1,13 +1,13 @@
 {
-  "originHash" : "4528b03c9b00e2070a17546e8f00caa22589224f006114f3158827381bbce802",
+  "originHash" : "baccc867e84742218ca31646972be4e6db7b9501c098815ac49ef5c4b045e24b",
   "pins" : [
     {
       "identity" : "easybar-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/easybar-app/easybar-kit",
       "state" : {
-        "revision" : "43945ce7aa58a0d426a9b6c9915c2e1fbdb8be29",
-        "version" : "0.7.6"
+        "revision" : "2f61d42b3bc2fb3040b50f8d955d21d7e1a9fc5c",
+        "version" : "0.7.7"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gi8lino/SwiftTOMLEdit.git",
       "state" : {
-        "revision" : "88f5e46408f74881ba56fc5660b33af111e1692f",
-        "version" : "0.2.1"
+        "revision" : "cd9c00ae6dfca336b713d76adc1c0981bb245b0f",
+        "version" : "0.2.3"
       }
     }
   ],

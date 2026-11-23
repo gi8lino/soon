@@ -14,11 +14,11 @@ let package = Package(
     //.package(path: "../easybar-kit"),
     .package(
       url: "https://github.com/easybar-app/easybar-kit",
-      from: "0.7.6",
+      from: "0.7.7",
     ),
     .package(
       url: "https://github.com/gi8lino/SwiftTOMLEdit.git",
-      from: "0.2.1",
+      from: "0.2.3",
     ),
   ],
   targets: [
