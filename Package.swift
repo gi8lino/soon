@@ -18,7 +18,7 @@ let package = Package(
     ),
     .package(
       url: "https://github.com/gi8lino/SwiftTOMLEdit.git",
-      from: "0.2.3",
+      from: "0.2.4",
     ),
   ],
   targets: [
